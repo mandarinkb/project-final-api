@@ -14,7 +14,7 @@ VOLUME /tmp
 EXPOSE 8080
 
 # Set application's JAR file
-ARG JAR_FILE=ec-web-scrapping-api-0.0.1-SNAPSHOT.jar
+ARG JAR_FILE=project-final-api-0.0.1-SNAPSHOT.jar
 
 # Add the application's JAR file to the container
 ADD ${JAR_FILE} app.jar
