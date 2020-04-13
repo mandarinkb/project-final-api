@@ -28,7 +28,6 @@ import com.projectfinalapi.model.User;
 import com.projectfinalapi.service.JwtUserDetailsService;
 import com.projectfinalapi.service.ServiceWebScrappingControl;
 
-//@CrossOrigin(origins = "*", allowedHeaders = "*", maxAge = 3600)
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 
 @RestController
@@ -160,26 +159,6 @@ public class RestApiController {
   public String webUsers() {
       return serviceWebScrappongControl.getUsers();
   }
-  /*    
-  @PostMapping(path = {"/users"}, headers = "Accept=application/json;charset=UTF-8")
-  public ResponseEntity<?> createUser(@RequestBody User userdto) throws Exception { //
-      String userDb = q.findOneStrExcuteQuery("select username from users where username= '" + userdto.getUsername() + "' ");
-      // check ว่ามีผู้ใช้นี้อยู่ในระบบหรือไม่
-      if ("".equals(userDb)) {
-          return ResponseEntity.ok(userDetailsService.save(userdto));
-      } else {
-          return new ResponseEntity<>(apiResponse.status(400, "มีผู้ใช้นี้แล้วในระบบ"), HttpStatus.BAD_REQUEST);
-      }
-  }
-  public String createUsers(@RequestBody String strBody) {
-      JSONObject obj = new JSONObject(strBody);
-      String username = obj.getString("username");
-      String password = obj.getString("password");
-      String role = obj.getString("role");
-      return serviceWebScrappongControl.saveUsers(username, password, role);
-  }
-*/
-
   
   @DeleteMapping(path = {"/users/{id}"}, headers = "Accept=application/json;charset=UTF-8")
   public String deleteUsers(@PathVariable("id") int id){
