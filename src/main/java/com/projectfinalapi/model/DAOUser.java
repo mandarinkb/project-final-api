@@ -10,18 +10,21 @@ import javax.persistence.Table;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
-@Table(name = "users")
+@Table(name = "USERS")
 public class DAOUser {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "USER_ID") 
+    @GeneratedValue(strategy = GenerationType.IDENTITY)     //id auto increment
     private long id;
-    @Column
+    
+    @Column(name = "USERNAME") 
     private String username;
-    @Column
-    @JsonIgnore
+    
+    @Column(name = "PASSWORD") 
     private String password;
-    @Column //เขียนเพิ่ม
+    
+    @Column(name = "ROLE") 
     private String role;
 
     public String getUsername() {
@@ -40,11 +43,11 @@ public class DAOUser {
         this.password = password;
     }
 
-    public String getRole() { //เขียนเพิ่ม
+    public String getRole() {
         return role;
     }
 
-    public void setRole(String role) { //เขียนเพิ่ม
+    public void setRole(String role) {
         this.role = role;
     }
 

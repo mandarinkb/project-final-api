@@ -67,7 +67,7 @@ public class JwtTokenUtil  {  //implements Serializable
     //3. According to JWS Compact Serialization(https://tools.ietf.org/html/draft-ietf-jose-json-web-signature-41#section-3.1)
     //   compaction of the JWT to a URL-safe string 
     private String doGenerateToken(Map<String, Object> claims, String username) {
-        String role = q.findOneStrExcuteQuery("select role from users where username= '"+username+"' ");
+        String role = q.findOneStrExcuteQuery("select ROLE from USERS where USERNAME= '"+username+"' ");
         claims.put("role", role); // เพิ่ม role เข้าไปที่ playload
         
         return Jwts.builder()

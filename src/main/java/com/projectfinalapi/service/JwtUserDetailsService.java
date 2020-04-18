@@ -11,11 +11,15 @@ import org.springframework.stereotype.Service;
 
 import com.projectfinalapi.dao.UserDao;
 import com.projectfinalapi.function.ApiResponse;
+import com.projectfinalapi.function.DateTime;
 import com.projectfinalapi.model.DAOUser;
 import com.projectfinalapi.model.User;
 
 @Service
 public class JwtUserDetailsService implements UserDetailsService {
+	@Autowired
+	private DateTime  dateTime;  
+	
     @Autowired
     private ApiResponse apiResponse;
     
@@ -42,6 +46,6 @@ public class JwtUserDetailsService implements UserDetailsService {
         newUser.setRole("user");  //เขียนเพิ่ม
         //return userDao.save(newUser);
         userDao.save(newUser);
-        return apiResponse.status(200, "บันทึกข้อมูลเรียบร้อย");
+        return apiResponse.users(dateTime.timestamp(), 201, user.getUsername(), "user");
     }
 }

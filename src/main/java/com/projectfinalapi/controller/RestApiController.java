@@ -21,10 +21,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.projectfinalapi.config.JwtTokenUtil;
 import com.projectfinalapi.function.ApiResponse;
+import com.projectfinalapi.function.CheckError;
+import com.projectfinalapi.function.DateTime;
 import com.projectfinalapi.function.JwtRequest;
-import com.projectfinalapi.function.JwtResponse;
 import com.projectfinalapi.model.Query;
 import com.projectfinalapi.model.User;
+import com.projectfinalapi.model.UserDto;
 import com.projectfinalapi.service.JwtUserDetailsService;
 import com.projectfinalapi.service.ServiceWebScrappingControl;
 
@@ -33,6 +35,12 @@ import com.projectfinalapi.service.ServiceWebScrappingControl;
 @RestController
 @RequestMapping("/api")
 public class RestApiController {
+  @Autowired
+  private CheckError error;
+	
+  @Autowired
+  private DateTime  dateTime;  
+	
   @Autowired
   private ApiResponse apiResponse;   
   
@@ -55,26 +63,63 @@ public class RestApiController {
   public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest) throws Exception {
       authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
       final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
-      final String token = jwtTokenUtil.generateToken(userDetails);
-      return ResponseEntity.ok(new JwtResponse(token));
+      final String token = jwtTokenUtil.generateToken(userDetails);      
+      String response = apiResponse.authenticate(dateTime.timestamp(), 200, token);
+      return new ResponseEntity<>(response, HttpStatus.OK);
   }
   
   @PostMapping(path = {"/register"}, headers = "Accept=application/json;charset=UTF-8")  
-  public ResponseEntity<?> saveUser(@RequestBody User userdto)  throws Exception{ //
-      String userDb = q.findOneStrExcuteQuery("select username from users where username= '"+userdto.getUsername()+"' ");
+  public ResponseEntity<?> createUsers(@RequestBody User user)  throws Exception{ //
+      String userDb = q.findOneStrExcuteQuery("select USERNAME from USERS where USERNAME= '"+user.getUsername()+"' ");
       // check ว่ามีผู้ใช้นี้อยู่ในระบบหรือไม่
-      if ("".equals(userDb)) {
-          return ResponseEntity.ok(userDetailsService.save(userdto));
+      if (userDb.equals("")) {
+    	  return new ResponseEntity<>(userDetailsService.save(user), HttpStatus.CREATED);
       } else {
-          return new ResponseEntity<>(apiResponse.status(400, "มีผู้ใช้นี้แล้วในระบบ"), HttpStatus.BAD_REQUEST);
+      	String error = apiResponse.error(dateTime.timestamp(), 400, "Bad Request",
+      			                        "That username is already taken. Try using a different name.", "/api/register");
+      	return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
       }
   }    
 
+  @GetMapping(path = {"/users"}, headers = "Accept=application/json;charset=UTF-8")
+  public ResponseEntity<?> readUsers() {
+	  return ResponseEntity.ok(serviceWebScrappongControl.findUsers());
+  }
+  
+  @GetMapping(path = {"/users/{id}"}, headers = "Accept=application/json;charset=UTF-8")
+  public ResponseEntity<?> getUsersId(@PathVariable("id") int id) {
+	  String serviceValue = serviceWebScrappongControl.findUsersById(id);
+	  if(error.isFindUsersByIdError(serviceValue)) {
+	      String error = apiResponse.error(dateTime.timestamp(), 400, "Bad Request",
+                                           "Not found users", "/api/users/");
+          return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+	  }else {
+		  return ResponseEntity.ok(serviceValue);
+	  }
+  }   
+
+  @PutMapping(path = {"/users/{id}"}, headers = "Accept=application/json;charset=UTF-8")
+  public ResponseEntity<?> updateUsers(@RequestBody UserDto userDto, @PathVariable("id") int id) {
+      return ResponseEntity.ok(serviceWebScrappongControl.updateUsers(id, userDto.getRole()));
+  }  
+  
+  @DeleteMapping(path = {"/users/{id}"}, headers = "Accept=application/json;charset=UTF-8")
+  public ResponseEntity<?> deleteUsers(@PathVariable("id") int id){
+	  return new ResponseEntity<>(serviceWebScrappongControl.deleteUsers(id), HttpStatus.NO_CONTENT);//NO_CONTENT
+  }
+
+   
+  
+  
+  
+  
+  
+  
   @GetMapping(path = {"/web"}, headers = "Accept=application/json;charset=UTF-8")
   public String webStatus() {
       return serviceWebScrappongControl.getWeb();
   }
-
+  
   @PostMapping(path = {"/web"}, headers = "Accept=application/json;charset=UTF-8")
   public String createWeb(@RequestBody String strBody) {
       JSONObject obj = new JSONObject(strBody);
@@ -155,27 +200,7 @@ public class RestApiController {
       return serviceWebScrappongControl.deleteSchedule(id);
   }
 
-  @GetMapping(path = {"/users"}, headers = "Accept=application/json;charset=UTF-8")
-  public String webUsers() {
-      return serviceWebScrappongControl.getUsers();
-  }
   
-  @DeleteMapping(path = {"/users/{id}"}, headers = "Accept=application/json;charset=UTF-8")
-  public String deleteUsers(@PathVariable("id") int id){
-      return serviceWebScrappongControl.deleteUsers(id);
-  }
-
-  @GetMapping(path = {"/users/{id}"}, headers = "Accept=application/json;charset=UTF-8")
-  public String getUsersId(@PathVariable("id") int id) {
-      return serviceWebScrappongControl.findUsersByid(id);
-  }    
-  
-  @PutMapping(path = {"/users/{id}"}, headers = "Accept=application/json;charset=UTF-8")
-  public String updateUsers(@RequestBody String strForm, @PathVariable("id") int id) {
-      JSONObject obj = new JSONObject(strForm);
-      String role = obj.getString("role");
-      return serviceWebScrappongControl.updateUsers(id, role);
-  }   
   
   private void authenticate(String username, String password) throws Exception {
       try {
