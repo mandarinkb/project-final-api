@@ -43,6 +43,15 @@ public class ApiResponse {
     	obj.put("url", url);
     	return obj.toString();
     }
+    
+    public String webStatus(String timestamp , int status , String webStatus) {
+    	JSONObject obj = new JSONObject();
+    	obj.put("timestamp", timestamp);
+    	obj.put("status", status);
+    	obj.put("webStatus", webStatus);
+    	return obj.toString();
+    }
+    
     public String schedule(String timestamp , int status , String scheduleName) {
     	JSONObject obj = new JSONObject();
     	obj.put("timestamp", timestamp);

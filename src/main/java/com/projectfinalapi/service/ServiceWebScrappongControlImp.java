@@ -14,6 +14,7 @@ import com.projectfinalapi.function.ApiResponse;
 import com.projectfinalapi.function.DateTime;
 import com.projectfinalapi.model.Database;
 import com.projectfinalapi.model.Query;
+import com.projectfinalapi.model.WebDto;
 
 @Service
 public class ServiceWebScrappongControlImp implements ServiceWebScrappingControl {
@@ -117,16 +118,6 @@ public class ServiceWebScrappongControlImp implements ServiceWebScrappingControl
         return obj.toString();
     }  
     
-/*    @Override
-    public String saveUsers(String username, String password, String role) {
-        String sql = "INSERT INTO users (username,password,role) "
-                   + "VALUES('" + username + "','" + password + "', '" + role + "')";
-        Connection conn = db.connectDatase();
-        db.executeQuery(conn, sql);
-        db.closeConnect(conn);
-        return apiResponse.status(200, "บันทึกข้อมูลเรียบร้อย");
-    }
-*/
     @Override
     public String updateUsers(int id, String role) {
     	String username = q.findOneStrExcuteQuery("select USERNAME from USERS where USER_ID= '"+id+"' ");
@@ -145,17 +136,21 @@ public class ServiceWebScrappongControlImp implements ServiceWebScrappingControl
         db.closeConnect(conn);       
         return apiResponse.delete(dateTime.timestamp(), 204, "deleted successfully");
     }
-   
-    
-    
-    
-    
-    
-    
     
     @Override
-    public String getWeb() {
-        String sql = "select * from web ORDER BY web_id DESC";
+    public String saveWeb(WebDto web) {
+        String sql = "insert into WEB (WEB_NAME,WEB_URL,WEB_STATUS,ICON_URL) "
+                   + "values('" + web.getWebName() + "','" + web.getWebUrl() + "', '" + web.getWebStatus() + "','" + web.getIconUrl() + "')";
+        Connection conn = db.connectDatase();
+        db.executeQuery(conn, sql);
+        db.closeConnect(conn);
+        
+        return apiResponse.web(dateTime.timestamp(), 201, web.getWebUrl());
+    }
+    
+    @Override
+    public String findWeb() {
+        String sql = "select * from WEB order by WEB_ID desc";
         List<String> listVarchar = new ArrayList<String>();
         List<String> listChar = new ArrayList<String>();
         List<String> listInt = new ArrayList<String>();
@@ -167,12 +162,12 @@ public class ServiceWebScrappongControlImp implements ServiceWebScrappingControl
                 int i = 0;
                 while (i < columns.getColumnCount()) {
                     i++;
-                    if (columns.getColumnTypeName(i) == "INT") {
-                        listInt.add(columns.getColumnName(i));
+                    if (columns.getColumnTypeName(i) == "INTEGER") {
+                        listInt.add(columns.getColumnName(i).toLowerCase());
                     } else if (columns.getColumnTypeName(i) == "CHAR") {
-                        listChar.add(columns.getColumnName(i));
+                        listChar.add(columns.getColumnName(i).toLowerCase());
                     } else {
-                        listVarchar.add(columns.getColumnName(i));
+                        listVarchar.add(columns.getColumnName(i).toLowerCase());
                     }
                 }
                 while (rs.next()) {
@@ -196,26 +191,18 @@ public class ServiceWebScrappongControlImp implements ServiceWebScrappingControl
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+        	System.out.println(e.getMessage());
         } finally {
             db.closeConnect(db.connectDatase());
         }
         return list.toString();
     }
 
-    @Override
-    public String saveWeb(String webName, String url, String type, String typeDetail, String webStatus, String season, String baseUrl, String detail) {
-        String sql = "INSERT INTO web (web_name,url,type,type_detail,web_status,season,base_url,detail) "
-                   + "VALUES('" + webName + "','" + url + "', '" + type + "','" + typeDetail + "','" + webStatus + "','" + season + "','" + baseUrl + "','" + detail + "')";
-        Connection conn = db.connectDatase();
-        db.executeQuery(conn, sql);
-        db.closeConnect(conn);
-        return apiResponse.status(200, "บันทึกข้อมูลเรียบร้อย");
-    }
+
 
     @Override
     public String findWebById(int web_id) {
-        String sql = "select * FROM web WHERE web_id =" + web_id;
+        String sql = "select * from WEB where WEB_ID =" + web_id;
         List<String> listVarchar = new ArrayList<String>();
         List<String> listInt = new ArrayList<String>();
         JSONObject obj = new JSONObject();
@@ -227,9 +214,9 @@ public class ServiceWebScrappongControlImp implements ServiceWebScrappingControl
                 while (i < columns.getColumnCount()) {
                     i++;
                     if (columns.getColumnTypeName(i) == "INT") {
-                        listInt.add(columns.getColumnName(i));
+                        listInt.add(columns.getColumnName(i).toLowerCase());
                     } else {
-                        listVarchar.add(columns.getColumnName(i));
+                        listVarchar.add(columns.getColumnName(i).toLowerCase());
                     }
                 }
                 while (rs.next()) {
@@ -251,33 +238,39 @@ public class ServiceWebScrappongControlImp implements ServiceWebScrappingControl
     }
     
     @Override
-    public String updateWebStatus(int id, String webStatus) {
-        String sql = "UPDATE web SET web_status = '" + webStatus + "' WHERE web_id =" + id;
+    public String updateWebStatus(int web_id , String webStatus) {
+        String sql = "update WEB set WEB_STATUS = '" + webStatus+ "' where WEB_ID =" + web_id;
         Connection conn = db.connectDatase();
         db.executeQuery(conn, sql);
-        db.closeConnect(conn);
-        return apiResponse.status(200, "อัพเดทสถานะเรียบร้อย");
+        db.closeConnect(conn);       
+        return apiResponse.webStatus(dateTime.timestamp(), 200, webStatus);
     }
 
     @Override
-    public String updateWeb(int web_id, String webName, String url, String type, String typeDetail, String webStatus, String season, String baseUrl, String detail) {
-        String sql = "UPDATE web SET web_name = '" + webName + "' , url = '" + url + "' ,"
-                   + " type = '" + type + "' , type_detail = '" + typeDetail + "' , web_status = '" + webStatus + "',"
-                   + " season = '" + season + "', base_url = '" + baseUrl + "', detail = '" + detail + "' WHERE web_id =" + web_id;
+    public String updateWeb(int web_id, WebDto web) {
+        String sql = "update WEB set WEB_NAME = '" + web.getWebName() + "' , WEB_URL = '" + web.getWebUrl() + "' ,"
+                   + " WEB_STATUS = '" + web.getWebStatus() + "' , ICON_URL = '" + web.getIconUrl() + "'"
+                   + " WHERE WEB_ID = " + web_id;
         Connection conn = db.connectDatase();
         db.executeQuery(conn, sql);
         db.closeConnect(conn);
-        return apiResponse.status(200, "อัพเดทข้อมูลเรียบร้อย");
+        return apiResponse.web(dateTime.timestamp(), 200, web.getWebUrl());
     }    
    
     @Override
     public String deleteWeb(int web_id) {
-        String sql = "DELETE FROM web WHERE web_id= '" + web_id + "'";
+        String sql = "delete from WEB where WEB_ID= '" + web_id + "'";
         Connection conn = db.connectDatase();
         db.executeQuery(conn, sql);
         db.closeConnect(conn);
-        return apiResponse.status(200, "ลบข้อมูลเรียบร้อย");
+        return apiResponse.delete(dateTime.timestamp(), 204, "deleted successfully");
     }    
+    
+    
+    
+    
+    
+    
     
     @Override
     public String getSchedule() {

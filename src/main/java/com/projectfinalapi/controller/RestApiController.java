@@ -27,6 +27,7 @@ import com.projectfinalapi.function.JwtRequest;
 import com.projectfinalapi.model.Query;
 import com.projectfinalapi.model.User;
 import com.projectfinalapi.model.UserDto;
+import com.projectfinalapi.model.WebDto;
 import com.projectfinalapi.service.JwtUserDetailsService;
 import com.projectfinalapi.service.ServiceWebScrappingControl;
 
@@ -87,7 +88,7 @@ public class RestApiController {
   }
   
   @GetMapping(path = {"/users/{id}"}, headers = "Accept=application/json;charset=UTF-8")
-  public ResponseEntity<?> getUsersId(@PathVariable("id") int id) {
+  public ResponseEntity<?> readUsersById(@PathVariable("id") int id) {
 	  String serviceValue = serviceWebScrappongControl.findUsersById(id);
 	  if(error.isFindUsersByIdError(serviceValue)) {
 	      String error = apiResponse.error(dateTime.timestamp(), 400, "Bad Request",
@@ -105,64 +106,44 @@ public class RestApiController {
   
   @DeleteMapping(path = {"/users/{id}"}, headers = "Accept=application/json;charset=UTF-8")
   public ResponseEntity<?> deleteUsers(@PathVariable("id") int id){
-	  return new ResponseEntity<>(serviceWebScrappongControl.deleteUsers(id), HttpStatus.NO_CONTENT);//NO_CONTENT
+	  return new ResponseEntity<>(serviceWebScrappongControl.deleteUsers(id), HttpStatus.NO_CONTENT);
   }
 
-   
-  
-  
-  
-  
-  
+  @PostMapping(path = {"/web"}, headers = "Accept=application/json;charset=UTF-8")
+  public ResponseEntity<?> createWeb(@RequestBody WebDto web) {
+	  return new ResponseEntity<>(serviceWebScrappongControl.saveWeb(web), HttpStatus.CREATED);
+  }   
   
   @GetMapping(path = {"/web"}, headers = "Accept=application/json;charset=UTF-8")
-  public String webStatus() {
-      return serviceWebScrappongControl.getWeb();
+  public ResponseEntity<?> findWeb() {
+      return ResponseEntity.ok(serviceWebScrappongControl.findWeb());
   }
   
-  @PostMapping(path = {"/web"}, headers = "Accept=application/json;charset=UTF-8")
-  public String createWeb(@RequestBody String strBody) {
-      JSONObject obj = new JSONObject(strBody);
-      String web_name = obj.getString("web_name");
-      String url = obj.getString("url");
-      String type = obj.getString("type");
-      String type_detail = obj.getString("type_detail");
-      String web_status = obj.getString("web_status");
-      String season = obj.getString("season");
-      String base_url = obj.getString("base_url");
-      String detail = obj.getString("detail");
-      return serviceWebScrappongControl.saveWeb(web_name, url, type, type_detail, web_status, season, base_url, detail);
-  }    
-  
-  @PutMapping(path = {"/web/{id}"}, headers = "Accept=application/json;charset=UTF-8")
-  public String updateWeb(@RequestBody String strBody, @PathVariable("id") int id) {
-      JSONObject obj = new JSONObject(strBody);
-      String web_name = obj.getString("web_name");
-      String url = obj.getString("url");
-      String type = obj.getString("type");
-      String type_detail = obj.getString("type_detail");
-      String web_status = obj.getString("web_status");
-      String season = obj.getString("season");
-      String base_url = obj.getString("base_url");
-      String detail = obj.getString("detail");
-      return serviceWebScrappongControl.updateWeb(id, web_name, url, type, type_detail, web_status, season, base_url, detail);
-  }    
   @GetMapping(path = {"/web/{id}"}, headers = "Accept=application/json;charset=UTF-8")
-  public String findWebId(@PathVariable("id") int id) {
-      return serviceWebScrappongControl.findWebById(id);
+  public ResponseEntity<?> findWebId(@PathVariable("id") int id) {
+	  return ResponseEntity.ok(serviceWebScrappongControl.findWebById(id));
   }
   
   @PutMapping(path = {"/web-status/{id}"}, headers = "Accept=application/json;charset=UTF-8")
-  public String updateWebStatus(@RequestBody String strForm, @PathVariable("id") int id) {
-      JSONObject obj = new JSONObject(strForm);
-      String webStatus = obj.getString("web_status");
-      return serviceWebScrappongControl.updateWebStatus(id, webStatus);
+  public ResponseEntity<?> updateWebStatus(@RequestBody WebDto web, @PathVariable("id") int id) {
+	  return ResponseEntity.ok(serviceWebScrappongControl.updateWebStatus(id, web.getWebStatus()));
   }
-     
+
+  @PutMapping(path = {"/web/{id}"}, headers = "Accept=application/json;charset=UTF-8")
+  public ResponseEntity<?>  updateWeb(@RequestBody WebDto webDto, @PathVariable("id") int id) {
+	  return ResponseEntity.ok(serviceWebScrappongControl.updateWeb(id , webDto));
+  }    
+
   @DeleteMapping(path = {"/web/{id}"}, headers = "Accept=application/json;charset=UTF-8")
-  public String deleteWeb(@PathVariable("id") int id){
-      return serviceWebScrappongControl.deleteWeb(id);
+  public ResponseEntity<?>  deleteWeb(@PathVariable("id") int id){
+      return new ResponseEntity<>(serviceWebScrappongControl.deleteWeb(id), HttpStatus.NO_CONTENT);
   }
+
+  
+  
+  
+  
+  
   @GetMapping(path = {"/schedule"}, headers = "Accept=application/json;charset=UTF-8")
   public String webSchedule() {
       return serviceWebScrappongControl.getSchedule();
