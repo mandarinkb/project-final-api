@@ -95,7 +95,7 @@ public class ServiceWebScrappongControlImp implements ServiceWebScrappingControl
                 int i = 0;
                 while (i < columns.getColumnCount()) {
                     i++;
-                    if (columns.getColumnTypeName(i) == "INTEGER") {
+                    if (columns.getColumnTypeName(i) == "INTEGER") {//INTEGER
                         listInt.add(columns.getColumnName(i).toLowerCase());
                     } else {
                         listVarchar.add(columns.getColumnName(i).toLowerCase());

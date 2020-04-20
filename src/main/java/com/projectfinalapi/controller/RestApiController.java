@@ -23,10 +23,8 @@ import com.projectfinalapi.config.JwtTokenUtil;
 import com.projectfinalapi.function.ApiResponse;
 import com.projectfinalapi.function.CheckError;
 import com.projectfinalapi.function.DateTime;
-import com.projectfinalapi.function.JwtRequest;
 import com.projectfinalapi.model.Query;
 import com.projectfinalapi.model.ScheduleDto;
-import com.projectfinalapi.model.User;
 import com.projectfinalapi.model.UserDto;
 import com.projectfinalapi.model.WebDto;
 import com.projectfinalapi.service.JwtUserDetailsService;
@@ -62,20 +60,20 @@ public class RestApiController {
   private ServiceWebScrappingControl serviceWebScrappongControl;
   
   @PostMapping(path = {"/authenticate"}, headers = "Accept=application/json;charset=UTF-8")    
-  public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest) throws Exception {
-      authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
-      final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
+  public ResponseEntity<?> createAuthenticationToken(@RequestBody UserDto userDto) throws Exception {
+	  authenticate(userDto.getUsername(), userDto.getPassword());
+      final UserDetails userDetails = userDetailsService.loadUserByUsername(userDto.getUsername());
       final String token = jwtTokenUtil.generateToken(userDetails);      
       String response = apiResponse.authenticate(dateTime.timestamp(), 200, token);
       return new ResponseEntity<>(response, HttpStatus.OK);
   }
-  
-  @PostMapping(path = {"/register"}, headers = "Accept=application/json;charset=UTF-8")  
-  public ResponseEntity<?> createUsers(@RequestBody User user)  throws Exception{ //
-      String userDb = q.findOneStrExcuteQuery("select USERNAME from USERS where USERNAME= '"+user.getUsername()+"' ");
+  //register
+  @PostMapping(path = {"/users"}, headers = "Accept=application/json;charset=UTF-8")  
+  public ResponseEntity<?> createUsers(@RequestBody UserDto userDto)  throws Exception{ //
+      String userDb = q.findOneStrExcuteQuery("select USERNAME from USERS where USERNAME= '"+userDto.getUsername()+"' ");
       // check ว่ามีผู้ใช้นี้อยู่ในระบบหรือไม่
       if (userDb.equals("")) {
-    	  return new ResponseEntity<>(userDetailsService.save(user), HttpStatus.CREATED);
+    	  return new ResponseEntity<>(userDetailsService.save(userDto), HttpStatus.CREATED);
       } else {
       	String error = apiResponse.error(dateTime.timestamp(), 400, "Bad Request",
       			                        "That username is already taken. Try using a different name.", "/api/register");

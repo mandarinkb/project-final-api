@@ -13,7 +13,7 @@ import com.projectfinalapi.dao.UserDao;
 import com.projectfinalapi.function.ApiResponse;
 import com.projectfinalapi.function.DateTime;
 import com.projectfinalapi.model.DAOUser;
-import com.projectfinalapi.model.User;
+import com.projectfinalapi.model.UserDto;
 
 @Service
 public class JwtUserDetailsService implements UserDetailsService {
@@ -39,7 +39,7 @@ public class JwtUserDetailsService implements UserDetailsService {
     }
 
     //public DAOUser save(User user) {
-    public String save(User user){
+    public String save(UserDto user){
         DAOUser newUser = new DAOUser();
         newUser.setUsername(user.getUsername());
         newUser.setPassword(bcryptEncoder.encode(user.getPassword()));
