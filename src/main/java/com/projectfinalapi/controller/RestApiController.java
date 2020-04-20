@@ -25,6 +25,7 @@ import com.projectfinalapi.function.CheckError;
 import com.projectfinalapi.function.DateTime;
 import com.projectfinalapi.function.JwtRequest;
 import com.projectfinalapi.model.Query;
+import com.projectfinalapi.model.ScheduleDto;
 import com.projectfinalapi.model.User;
 import com.projectfinalapi.model.UserDto;
 import com.projectfinalapi.model.WebDto;
@@ -139,50 +140,31 @@ public class RestApiController {
       return new ResponseEntity<>(serviceWebScrappongControl.deleteWeb(id), HttpStatus.NO_CONTENT);
   }
 
-  
-  
-  
-  
+  @PostMapping(path = {"/schedule"}, headers = "Accept=application/json;charset=UTF-8")
+  public ResponseEntity<?>  createSchedule(@RequestBody ScheduleDto scheduleDto) {
+      return new ResponseEntity<>(serviceWebScrappongControl.saveSchedule(scheduleDto), HttpStatus.CREATED);
+  }
   
   @GetMapping(path = {"/schedule"}, headers = "Accept=application/json;charset=UTF-8")
-  public String webSchedule() {
-      return serviceWebScrappongControl.getSchedule();
+  public ResponseEntity<?>  readSchedule() {
+      return ResponseEntity.ok(serviceWebScrappongControl.findSchedule());
   }
 
   @GetMapping(path = {"/schedule/{id}"}, headers = "Accept=application/json;charset=UTF-8")
-  public String webScheduleId(@PathVariable("id") int id) {
-      return serviceWebScrappongControl.findScheduleById(id);
+  public ResponseEntity<?>  readScheduleId(@PathVariable("id") int id) {
+	  return ResponseEntity.ok(serviceWebScrappongControl.findScheduleById(id));
   }
 
   @PutMapping(path = {"/schedule/{id}"}, headers = "Accept=application/json;charset=UTF-8")
-  public String updateSchedule(@RequestBody String strForm, @PathVariable("id") int id) {
-      JSONObject obj = new JSONObject(strForm);
-      String schedule_name = obj.getString("schedule_name");
-      String cron_expression = obj.getString("cron_expression");
-      String function_name = obj.getString("function_name");
-      String project_name = obj.getString("project_name");
-      String detail = obj.getString("detail");
-      return serviceWebScrappongControl.updateSchedule(id, schedule_name, cron_expression, function_name, project_name, detail);
+  public ResponseEntity<?>  updateSchedule(@RequestBody ScheduleDto scheduleDto, @PathVariable("id") int id) {
+      return ResponseEntity.ok(serviceWebScrappongControl.updateSchedule(id, scheduleDto));
   }
 
-  @PostMapping(path = {"/schedule"}, headers = "Accept=application/json;charset=UTF-8")
-  public String createSchedule(@RequestBody String strBody) {
-      JSONObject obj = new JSONObject(strBody);
-      String schedule_name = obj.getString("schedule_name");
-      String cron_expression = obj.getString("cron_expression");
-      String function_name = obj.getString("function_name");
-      String project_name = obj.getString("project_name");
-      String detail = obj.getString("detail");
-      return serviceWebScrappongControl.saveSchedule(schedule_name, cron_expression, function_name, project_name, detail);
-  }
-  
   @DeleteMapping(path = {"/schedule/{id}"}, headers = "Accept=application/json;charset=UTF-8")
-  public String deleteSchedule(@PathVariable("id") int id){
-      return serviceWebScrappongControl.deleteSchedule(id);
+  public ResponseEntity<?>  deleteSchedule(@PathVariable("id") int id){
+      return new ResponseEntity<>(serviceWebScrappongControl.deleteSchedule(id), HttpStatus.NO_CONTENT);
   }
 
-  
-  
   private void authenticate(String username, String password) throws Exception {
       try {
           authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));

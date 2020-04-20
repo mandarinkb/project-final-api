@@ -1,5 +1,6 @@
 package com.projectfinalapi.service;
 
+import com.projectfinalapi.model.ScheduleDto;
 import com.projectfinalapi.model.WebDto;
 
 public interface ServiceWebScrappingControl {
@@ -13,12 +14,9 @@ public interface ServiceWebScrappingControl {
     public String updateWebStatus(int web_id ,  String webStatus);
     public String updateWeb(int web_id ,WebDto web);
     public String deleteWeb(int web_id);
-    
-    public String getSchedule();
+    public String saveSchedule(ScheduleDto schedule);
+    public String findSchedule();
     public String findScheduleById(int id);
-    public String saveSchedule(String scheduleName, String cronExpression, String functionName, String projectName, String detail);
-    public String updateSchedule(int id, String scheduleName, String cronExpression, String functionName, String projectName, String detail);
+    public String updateSchedule(int id, ScheduleDto schedule);
     public String deleteSchedule(int schedule_id);
-    
-
 }

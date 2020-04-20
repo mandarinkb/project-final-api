@@ -14,6 +14,7 @@ import com.projectfinalapi.function.ApiResponse;
 import com.projectfinalapi.function.DateTime;
 import com.projectfinalapi.model.Database;
 import com.projectfinalapi.model.Query;
+import com.projectfinalapi.model.ScheduleDto;
 import com.projectfinalapi.model.WebDto;
 
 @Service
@@ -213,7 +214,7 @@ public class ServiceWebScrappongControlImp implements ServiceWebScrappingControl
                 int i = 0;
                 while (i < columns.getColumnCount()) {
                     i++;
-                    if (columns.getColumnTypeName(i) == "INT") {
+                    if (columns.getColumnTypeName(i) == "INTEGER") {
                         listInt.add(columns.getColumnName(i).toLowerCase());
                     } else {
                         listVarchar.add(columns.getColumnName(i).toLowerCase());
@@ -230,7 +231,7 @@ public class ServiceWebScrappongControlImp implements ServiceWebScrappingControl
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+        	System.out.println(e.getMessage());
         } finally {
             db.closeConnect(db.connectDatase());
         }
@@ -270,11 +271,20 @@ public class ServiceWebScrappongControlImp implements ServiceWebScrappingControl
     
     
     
-    
+    @Override
+    public String saveSchedule(ScheduleDto schedule) {
+        String sql = "insert into SCHEDULE(SCHEDULE_NAME,CRON_EXPRESSION,METHOD_NAME,PROJECT_NAME) "
+                   + "values('" + schedule.getScheduleName() + "','" + schedule.getCronExpression() + "',"
+                   		+ " '" + schedule.getMethodName() + "','" + schedule.getProjectName() + "')";
+        Connection conn = db.connectDatase();
+        db.executeQuery(conn, sql);
+        db.closeConnect(conn);
+        return apiResponse.schedule(dateTime.timestamp(), 200, schedule.getScheduleName());
+    } 
     
     @Override
-    public String getSchedule() {
-        String sql = "select * from schedule ORDER BY schedule_id DESC";
+    public String findSchedule() {
+        String sql = "select * from SCHEDULE order by SCHEDULE_ID desc";
         List<String> listVarchar = new ArrayList<String>();
         List<String> listChar = new ArrayList<String>();
         List<String> listInt = new ArrayList<String>();
@@ -286,10 +296,10 @@ public class ServiceWebScrappongControlImp implements ServiceWebScrappingControl
                 int i = 0;
                 while (i < columns.getColumnCount()) {
                     i++;
-                    if (columns.getColumnTypeName(i) == "INT") {
-                        listInt.add(columns.getColumnName(i));
+                    if (columns.getColumnTypeName(i) == "INTEGER") {
+                        listInt.add(columns.getColumnName(i).toLowerCase());
                     } else if (columns.getColumnTypeName(i) == "CHAR") {
-                        listChar.add(columns.getColumnName(i));
+                        listChar.add(columns.getColumnName(i).toLowerCase());
                     } else {
                         listVarchar.add(columns.getColumnName(i));
                     }
@@ -315,7 +325,7 @@ public class ServiceWebScrappongControlImp implements ServiceWebScrappingControl
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+        	System.out.println(e.getMessage());
         } finally {
             db.closeConnect(db.connectDatase());
         }
@@ -324,7 +334,7 @@ public class ServiceWebScrappongControlImp implements ServiceWebScrappingControl
 
     @Override
     public String findScheduleById(int id) {
-        String sql = "select * FROM schedule WHERE schedule_id =" + id;
+        String sql = "select * from SCHEDULE where SCHEDULE_ID =" + id;
         List<String> listVarchar = new ArrayList<String>();
         List<String> listInt = new ArrayList<String>();
         JSONObject obj = new JSONObject();
@@ -335,10 +345,10 @@ public class ServiceWebScrappongControlImp implements ServiceWebScrappingControl
                 int i = 0;
                 while (i < columns.getColumnCount()) {
                     i++;
-                    if (columns.getColumnTypeName(i) == "INT") {
-                        listInt.add(columns.getColumnName(i));
+                    if (columns.getColumnTypeName(i) == "INTEGER") {
+                        listInt.add(columns.getColumnName(i).toLowerCase());
                     } else {
-                        listVarchar.add(columns.getColumnName(i));
+                        listVarchar.add(columns.getColumnName(i).toLowerCase());
                     }
                 }
                 while (rs.next()) {
@@ -352,7 +362,7 @@ public class ServiceWebScrappongControlImp implements ServiceWebScrappingControl
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+        	System.out.println(e.getMessage());
         } finally {
             db.closeConnect(db.connectDatase());
         }
@@ -360,32 +370,22 @@ public class ServiceWebScrappongControlImp implements ServiceWebScrappingControl
     }
 
     @Override
-    public String saveSchedule(String scheduleName, String cronExpression, String functionName, String projectName, String detail) {
-        String sql = "INSERT INTO schedule (schedule_name,cron_expression,function_name,project_name,detail) "
-                   + "VALUES('" + scheduleName + "','" + cronExpression + "', '" + functionName + "','" + projectName + "','" + detail + "')";
+    public String updateSchedule(int id, ScheduleDto schedule) {
+        String sql = "update SCHEDULE set SCHEDULE_NAME = '" + schedule.getScheduleName() + "' , CRON_EXPRESSION = '" + schedule.getCronExpression() + "' ,"
+                  + " METHOD_NAME = '" + schedule.getMethodName() + "' , PROJECT_NAME = '" + schedule.getProjectName() + "'  WHERE SCHEDULE_ID =" + id;
         Connection conn = db.connectDatase();
         db.executeQuery(conn, sql);
         db.closeConnect(conn);
-        return apiResponse.status(200, "บันทึกข้อมูลเรียบร้อย");
-    }
-
-    @Override
-    public String updateSchedule(int id, String scheduleName, String cronExpression, String functionName, String projectName, String detail) {
-        String sql = "UPDATE schedule SET schedule_name = '" + scheduleName + "' , cron_expression = '" + cronExpression + "' ,"
-                + " function_name = '" + functionName + "' , project_name = '" + projectName + "' , detail = '" + detail + "' WHERE schedule_id =" + id;
-        Connection conn = db.connectDatase();
-        db.executeQuery(conn, sql);
-        db.closeConnect(conn);
-        return apiResponse.status(200, "อัพเดทข้อมูลเรียบร้อย");
+        return apiResponse.schedule(dateTime.timestamp(), 200, schedule.getScheduleName());
     }
 
     @Override
     public String deleteSchedule(int schedule_id) {
-        String sql = "DELETE FROM schedule WHERE schedule_id= '" + schedule_id + "'";
+        String sql = "delete from SCHEDULE where SCHEDULE_ID= '" + schedule_id + "'";
         Connection conn = db.connectDatase();
         db.executeQuery(conn, sql);
         db.closeConnect(conn);
-        return apiResponse.status(200, "ลบข้อมูลเรียบร้อย");
+        return apiResponse.delete(dateTime.timestamp(), 204, "deleted successfully");
     }
 
 }
