@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import com.projectfinalapi.function.ApiResponse;
 import com.projectfinalapi.function.DateTime;
+import com.projectfinalapi.function.Json;
 import com.projectfinalapi.model.Database;
 import com.projectfinalapi.model.Query;
 import com.projectfinalapi.model.ScheduleDto;
@@ -19,6 +20,9 @@ import com.projectfinalapi.model.WebDto;
 
 @Service
 public class ServiceWebScrappongControlImp implements ServiceWebScrappingControl {
+	@Autowired
+	private Json json;
+	
 	@Autowired
 	private DateTime  dateTime; 
 
@@ -49,7 +53,7 @@ public class ServiceWebScrappongControlImp implements ServiceWebScrappingControl
                     if (columns.getColumnTypeName(i) == ("INTEGER")) {  
                         listInt.add(columns.getColumnName(i).toLowerCase());
                     } else if (columns.getColumnTypeName(i) == "CHAR") {
-                        listChar.add(columns.getColumnName(i).toLowerCase());
+                        listChar.add(columns.getColumnName(i).toLowerCase()); //columns.getColumnName(i).toLowerCase()
                     } else {
                         listVarchar.add(columns.getColumnName(i).toLowerCase());
                     }
@@ -57,17 +61,17 @@ public class ServiceWebScrappongControlImp implements ServiceWebScrappingControl
                 while (rs.next()) {
                     JSONObject obj = new JSONObject();
                     for (i = 0; i < listInt.size(); i++) {
-                        obj.put(listInt.get(i), rs.getInt(listInt.get(i)));
+                        obj.put(json.changeKeyUpperCase(listInt.get(i)), rs.getInt(listInt.get(i)));
                     }
                     for (i = 0; i < listVarchar.size(); i++) {
-                        obj.put(listVarchar.get(i), rs.getString(listVarchar.get(i)));
+                        obj.put(json.changeKeyUpperCase(listVarchar.get(i)), rs.getString(listVarchar.get(i)));
                     }
                     for (i = 0; i < listChar.size(); i++) {
                         String value = rs.getString(listChar.get(i));
                         if ("1".equals(value)) {
-                            obj.put(listChar.get(i), true);
+                            obj.put(json.changeKeyUpperCase(listChar.get(i)), true);
                         } else {
-                            obj.put(listChar.get(i), false);
+                            obj.put(json.changeKeyUpperCase(listChar.get(i)), false);
                         }
                     }
 
@@ -104,10 +108,10 @@ public class ServiceWebScrappongControlImp implements ServiceWebScrappingControl
                 while (rs.next()) {
                     obj = new JSONObject();
                     for (i = 0; i < listInt.size(); i++) {
-                        obj.put(listInt.get(i), rs.getInt(listInt.get(i)));
+                        obj.put(json.changeKeyUpperCase(listInt.get(i)), rs.getInt(listInt.get(i)));
                     }
                     for (i = 0; i < listVarchar.size(); i++) {
-                        obj.put(listVarchar.get(i), rs.getString(listVarchar.get(i)));
+                        obj.put(json.changeKeyUpperCase(listVarchar.get(i)), rs.getString(listVarchar.get(i)));
                     }
                 }
             }
@@ -174,17 +178,17 @@ public class ServiceWebScrappongControlImp implements ServiceWebScrappingControl
                 while (rs.next()) {
                     JSONObject obj = new JSONObject();
                     for (i = 0; i < listInt.size(); i++) {
-                        obj.put(listInt.get(i), rs.getInt(listInt.get(i)));
+                        obj.put(json.changeKeyUpperCase(listInt.get(i)), rs.getInt(listInt.get(i)));
                     }
                     for (i = 0; i < listVarchar.size(); i++) {
-                        obj.put(listVarchar.get(i), rs.getString(listVarchar.get(i)));
+                        obj.put(json.changeKeyUpperCase(listVarchar.get(i)), rs.getString(listVarchar.get(i)));
                     }
                     for (i = 0; i < listChar.size(); i++) {
                         String value = rs.getString(listChar.get(i));
                         if ("1".equals(value)) {
-                            obj.put(listChar.get(i), true);
+                            obj.put(json.changeKeyUpperCase(listChar.get(i)), true);
                         } else {
-                            obj.put(listChar.get(i), false);
+                            obj.put(json.changeKeyUpperCase(listChar.get(i)), false);
                         }
                     }
 
@@ -223,10 +227,10 @@ public class ServiceWebScrappongControlImp implements ServiceWebScrappingControl
                 while (rs.next()) {
                     obj = new JSONObject();
                     for (i = 0; i < listInt.size(); i++) {
-                        obj.put(listInt.get(i), rs.getInt(listInt.get(i)));
+                        obj.put(json.changeKeyUpperCase(listInt.get(i)), rs.getInt(listInt.get(i)));
                     }
                     for (i = 0; i < listVarchar.size(); i++) {
-                        obj.put(listVarchar.get(i), rs.getString(listVarchar.get(i)));
+                        obj.put(json.changeKeyUpperCase(listVarchar.get(i)), rs.getString(listVarchar.get(i)));
                     }
                 }
             }
@@ -301,23 +305,23 @@ public class ServiceWebScrappongControlImp implements ServiceWebScrappingControl
                     } else if (columns.getColumnTypeName(i) == "CHAR") {
                         listChar.add(columns.getColumnName(i).toLowerCase());
                     } else {
-                        listVarchar.add(columns.getColumnName(i));
+                        listVarchar.add(columns.getColumnName(i).toLowerCase());
                     }
                 }
                 while (rs.next()) {
                     JSONObject obj = new JSONObject();
                     for (i = 0; i < listInt.size(); i++) {
-                        obj.put(listInt.get(i), rs.getInt(listInt.get(i)));
+                        obj.put(json.changeKeyUpperCase(listInt.get(i)), rs.getInt(listInt.get(i)));
                     }
                     for (i = 0; i < listVarchar.size(); i++) {
-                        obj.put(listVarchar.get(i), rs.getString(listVarchar.get(i)));
+                        obj.put(json.changeKeyUpperCase(listVarchar.get(i)), rs.getString(listVarchar.get(i)));
                     }
                     for (i = 0; i < listChar.size(); i++) {
                         String value = rs.getString(listChar.get(i));
                         if ("1".equals(value)) {
-                            obj.put(listChar.get(i), true);
+                            obj.put(json.changeKeyUpperCase(listChar.get(i)), true);
                         } else {
-                            obj.put(listChar.get(i), false);
+                            obj.put(json.changeKeyUpperCase(listChar.get(i)), false);
                         }
                     }
 
@@ -354,10 +358,10 @@ public class ServiceWebScrappongControlImp implements ServiceWebScrappingControl
                 while (rs.next()) {
                     obj = new JSONObject();
                     for (i = 0; i < listInt.size(); i++) {
-                        obj.put(listInt.get(i), rs.getInt(listInt.get(i)));
+                        obj.put(json.changeKeyUpperCase(listInt.get(i)), rs.getInt(listInt.get(i)));
                     }
                     for (i = 0; i < listVarchar.size(); i++) {
-                        obj.put(listVarchar.get(i), rs.getString(listVarchar.get(i)));
+                        obj.put(json.changeKeyUpperCase(listVarchar.get(i)), rs.getString(listVarchar.get(i)));
                     }
                 }
             }
