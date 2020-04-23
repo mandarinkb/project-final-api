@@ -491,6 +491,9 @@ public class ServiceWebScrappongControlImp implements ServiceWebScrappingControl
         String sql = "update SWITCH_DATABASE set DATABASE_STATUS = '" + databaseStatus+ "' where DATABASE_ID =" + databaseId;
         Connection conn = db.connectDatase();
         db.executeQuery(conn, sql);
+        // update สถานะอื่นๆที่เหลือให้เป็น 0
+        String newSql = "update SWITCH_DATABASE set DATABASE_STATUS = '0' where DATABASE_ID <>"+ databaseId;
+        db.executeQuery(conn, newSql);
         db.closeConnect(conn);       
         return apiResponse.switchDatabaseStatus(dateTime.timestamp(), 200, databaseStatus);
 	}
