@@ -52,6 +52,14 @@ public class ApiResponse {
     	return obj.toString();
     }
     
+    public String switchDatabaseStatus(String timestamp , int status , String databaseStatus) {
+    	JSONObject obj = new JSONObject();
+    	obj.put("timestamp", timestamp);
+    	obj.put("status", status);
+    	obj.put("databaseStatus", databaseStatus);
+    	return obj.toString();
+    }
+    
     public String schedule(String timestamp , int status , String scheduleName) {
     	JSONObject obj = new JSONObject();
     	obj.put("timestamp", timestamp);

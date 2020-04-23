@@ -16,6 +16,7 @@ import com.projectfinalapi.function.Json;
 import com.projectfinalapi.model.Database;
 import com.projectfinalapi.model.Query;
 import com.projectfinalapi.model.ScheduleDto;
+import com.projectfinalapi.model.SwitchDatabaseDto;
 import com.projectfinalapi.model.WebDto;
 
 @Service
@@ -271,10 +272,6 @@ public class ServiceWebScrappongControlImp implements ServiceWebScrappingControl
         return apiResponse.delete(dateTime.timestamp(), 204, "deleted successfully");
     }    
     
-    
-    
-    
-    
     @Override
     public String saveSchedule(ScheduleDto schedule) {
         String sql = "insert into SCHEDULE(SCHEDULE_NAME,CRON_EXPRESSION,METHOD_NAME,PROJECT_NAME) "
@@ -391,5 +388,132 @@ public class ServiceWebScrappongControlImp implements ServiceWebScrappingControl
         db.closeConnect(conn);
         return apiResponse.delete(dateTime.timestamp(), 204, "deleted successfully");
     }
+
+	@Override
+	public String saveSwitchDatabase(SwitchDatabaseDto switchDatabase) {
+        String sql = "insert into SWITCH_DATABASE(DATABASE_NAME,DATABASE_STATUS) "
+                + "values('" + switchDatabase.getDatabaseName() + "','" + switchDatabase.getDatabaseStatus() + "')";
+     Connection conn = db.connectDatase();
+     db.executeQuery(conn, sql);
+     db.closeConnect(conn);
+     return apiResponse.schedule(dateTime.timestamp(), 200, switchDatabase.getDatabaseName());
+	}
+
+	@Override
+	public String findSwitchDatabase() {
+        String sql = "select * from SWITCH_DATABASE order by DATABASE_ID desc";
+        List<String> listVarchar = new ArrayList<String>();
+        List<String> listChar = new ArrayList<String>();
+        List<String> listInt = new ArrayList<String>();
+        List<JSONObject> list = new ArrayList<>();
+        try {
+            ResultSet rs = db.getResultSet(db.connectDatase(), sql);
+            if (rs != null) {
+                ResultSetMetaData columns = rs.getMetaData();
+                int i = 0;
+                while (i < columns.getColumnCount()) {
+                    i++;
+                    if (columns.getColumnTypeName(i) == "INTEGER") {
+                        listInt.add(columns.getColumnName(i).toLowerCase());
+                    } else if (columns.getColumnTypeName(i) == "CHAR") {
+                        listChar.add(columns.getColumnName(i).toLowerCase());
+                    } else {
+                        listVarchar.add(columns.getColumnName(i).toLowerCase());
+                    }
+                }
+                while (rs.next()) {
+                    JSONObject obj = new JSONObject();
+                    for (i = 0; i < listInt.size(); i++) {
+                        obj.put(json.changeKeyUpperCase(listInt.get(i)), rs.getInt(listInt.get(i)));
+                    }
+                    for (i = 0; i < listVarchar.size(); i++) {
+                        obj.put(json.changeKeyUpperCase(listVarchar.get(i)), rs.getString(listVarchar.get(i)));
+                    }
+                    for (i = 0; i < listChar.size(); i++) {
+                        String value = rs.getString(listChar.get(i));
+                        if ("1".equals(value)) {
+                            obj.put(json.changeKeyUpperCase(listChar.get(i)), true);
+                        } else {
+                            obj.put(json.changeKeyUpperCase(listChar.get(i)), false);
+                        }
+                    }
+
+                    list.add(obj);
+                }
+            }
+        } catch (Exception e) {
+        	System.out.println(e.getMessage());
+        } finally {
+            db.closeConnect(db.connectDatase());
+        }
+        return list.toString();
+	}
+
+	@Override
+	public String findSwitchDatabaseleById(int id) {
+        String sql = "select * from SWITCH_DATABASE where DATABASE_ID =" + id;
+        List<String> listVarchar = new ArrayList<String>();
+        List<String> listInt = new ArrayList<String>();
+        JSONObject obj = new JSONObject();
+        try {
+            ResultSet rs = db.getResultSet(db.connectDatase(), sql);
+            if (rs != null) {
+                ResultSetMetaData columns = rs.getMetaData();
+                int i = 0;
+                while (i < columns.getColumnCount()) {
+                    i++;
+                    if (columns.getColumnTypeName(i) == "INTEGER") {
+                        listInt.add(columns.getColumnName(i).toLowerCase());
+                    } else {
+                        listVarchar.add(columns.getColumnName(i).toLowerCase());
+                    }
+                }
+                while (rs.next()) {
+                    obj = new JSONObject();
+                    for (i = 0; i < listInt.size(); i++) {
+                        obj.put(json.changeKeyUpperCase(listInt.get(i)), rs.getInt(listInt.get(i)));
+                    }
+                    for (i = 0; i < listVarchar.size(); i++) {
+                        obj.put(json.changeKeyUpperCase(listVarchar.get(i)), rs.getString(listVarchar.get(i)));
+                    }
+                }
+            }
+        } catch (Exception e) {
+        	System.out.println(e.getMessage());
+        } finally {
+            db.closeConnect(db.connectDatase());
+        }
+        return obj.toString();
+	}
+
+	@Override
+	public String updateSwitchDatabaseStatus(int databaseId, String databaseStatus) {
+        String sql = "update SWITCH_DATABASE set DATABASE_STATUS = '" + databaseStatus+ "' where DATABASE_ID =" + databaseId;
+        Connection conn = db.connectDatase();
+        db.executeQuery(conn, sql);
+        db.closeConnect(conn);       
+        return apiResponse.switchDatabaseStatus(dateTime.timestamp(), 200, databaseStatus);
+	}
+	
+	@Override
+	public String updateSwitchDatabase(int id, SwitchDatabaseDto switchDatabase) {
+        String sql = "update SWITCH_DATABASE set DATABASE_NAME = '" + switchDatabase.getDatabaseName() + "' , "
+                + " DATABASE_STATUS = '" + switchDatabase.getDatabaseStatus() + "'  WHERE DATABASE_ID =" + id;
+      Connection conn = db.connectDatase();
+      db.executeQuery(conn, sql);
+      db.closeConnect(conn);
+      return apiResponse.schedule(dateTime.timestamp(), 200, switchDatabase.getDatabaseName());
+	}
+
+	@Override
+	public String deleteSwitchDatabase(int databaseid) {
+        String sql = "delete from SWITCH_DATABASE where DATABASE_ID= '" + databaseid + "'";
+        Connection conn = db.connectDatase();
+        db.executeQuery(conn, sql);
+        db.closeConnect(conn);
+        return apiResponse.delete(dateTime.timestamp(), 204, "deleted successfully");
+	}
+
+
 
 }

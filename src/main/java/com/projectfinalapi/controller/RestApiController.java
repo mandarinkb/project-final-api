@@ -25,6 +25,7 @@ import com.projectfinalapi.function.CheckError;
 import com.projectfinalapi.function.DateTime;
 import com.projectfinalapi.model.Query;
 import com.projectfinalapi.model.ScheduleDto;
+import com.projectfinalapi.model.SwitchDatabaseDto;
 import com.projectfinalapi.model.UserDto;
 import com.projectfinalapi.model.WebDto;
 import com.projectfinalapi.service.JwtUserDetailsService;
@@ -162,7 +163,41 @@ public class RestApiController {
   public ResponseEntity<?>  deleteSchedule(@PathVariable("id") int id){
       return new ResponseEntity<>(serviceWebScrappongControl.deleteSchedule(id), HttpStatus.NO_CONTENT);
   }
+  
 
+  
+  
+  
+  @PostMapping(path = {"/switch-database"}, headers = "Accept=application/json;charset=UTF-8")
+  public ResponseEntity<?>  createSwitchDatabase(@RequestBody SwitchDatabaseDto switchDatabaseDto) {
+      return new ResponseEntity<>(serviceWebScrappongControl.saveSwitchDatabase(switchDatabaseDto), HttpStatus.CREATED);
+  }
+  
+  @GetMapping(path = {"/switch-database"}, headers = "Accept=application/json;charset=UTF-8")
+  public ResponseEntity<?>  readSwitchDatabase() {
+      return ResponseEntity.ok(serviceWebScrappongControl.findSwitchDatabase());
+  }
+
+  @GetMapping(path = {"/switch-database/{id}"}, headers = "Accept=application/json;charset=UTF-8")
+  public ResponseEntity<?>  readSwitchDatabaseId(@PathVariable("id") int id) {
+	  return ResponseEntity.ok(serviceWebScrappongControl.findSwitchDatabaseleById(id));
+  }
+
+  @PutMapping(path = {"/switch-database-status/{id}"}, headers = "Accept=application/json;charset=UTF-8")
+  public ResponseEntity<?> updateSwitchDatabaseStatus(@RequestBody SwitchDatabaseDto switchDatabaseDto, @PathVariable("id") int id) {
+	  return ResponseEntity.ok(serviceWebScrappongControl.updateSwitchDatabaseStatus(id, switchDatabaseDto.getDatabaseStatus()));
+  }
+  
+  @PutMapping(path = {"/switch-database/{id}"}, headers = "Accept=application/json;charset=UTF-8")
+  public ResponseEntity<?>  updateSwitchDatabase(@RequestBody SwitchDatabaseDto switchDatabaseDto, @PathVariable("id") int id) {
+      return ResponseEntity.ok(serviceWebScrappongControl.updateSwitchDatabase(id, switchDatabaseDto));
+  }
+
+  @DeleteMapping(path = {"/switch-database/{id}"}, headers = "Accept=application/json;charset=UTF-8")
+  public ResponseEntity<?>  deleteSwitchDatabase(@PathVariable("id") int id){
+      return new ResponseEntity<>(serviceWebScrappongControl.deleteSwitchDatabase(id), HttpStatus.NO_CONTENT);
+  }
+  
   private void authenticate(String username, String password) throws Exception {
       try {
           authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
