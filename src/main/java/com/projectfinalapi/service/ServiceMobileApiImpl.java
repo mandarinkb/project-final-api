@@ -25,6 +25,12 @@ public class ServiceMobileApiImpl implements ServiceMobileApi{
 	    String elsValue = elasticsearch.getByName(index, name);
 	    return getGoods(elsValue);
 	}
+
+	@Override
+	public String listItemByDesc(String index) {
+	    String elsValue = elasticsearch.getItemDesc(index);
+	    return getGoods(elsValue);
+	}
 	
 	//method
 	public String getGoods(String elsValue){

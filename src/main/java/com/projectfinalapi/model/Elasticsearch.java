@@ -48,4 +48,19 @@ public class Elasticsearch {
         }
         return values.toString();
     }
+    public String getItemDesc(String index) {
+        String values = null;
+        try {
+        	Unirest.setTimeouts(0, 0);
+        	HttpResponse<String> response = Unirest.post(elasIp+index+"/_search")
+        	  .header("Content-Type", "application/json")
+        	  .body("{\"from\": 0,\"size\": 50,\"sort\": {\"discount\": \"desc\"},\"query\": {\"match_all\": {}}}")
+        	  .asString();
+
+            values = response.getBody();
+        } catch (UnirestException ex) {
+            Logger.getLogger(Elasticsearch.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return values.toString();
+    }
 }
