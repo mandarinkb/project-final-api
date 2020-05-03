@@ -1,17 +1,29 @@
 package com.projectfinalapi.service;
 
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.util.ArrayList;
 import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.projectfinalapi.function.Json;
+import com.projectfinalapi.model.Database;
 import com.projectfinalapi.model.Elasticsearch;
+import com.projectfinalapi.model.GoodsDTO;
 
 @Service
 public class ServiceMobileApiImpl implements ServiceMobileApi{
     @Autowired
     private Elasticsearch  elasticsearch;
+    
+    @Autowired
+    private Database db;
+    
+	@Autowired
+	private Json json;
  
 
 	@Override
@@ -25,11 +37,72 @@ public class ServiceMobileApiImpl implements ServiceMobileApi{
 	    String elsValue = elasticsearch.getByName(index, name);
 	    return getGoods(elsValue);
 	}
+	
+	@Override
+	public String listNameAndFilter(String index, GoodsDTO goods) {		
+		String strWebName = json.webNameJson(goods.getWebName());
+		//System.out.println(strWebName);
+	    String elsValue = elasticsearch.getByNameAndFilter(index, goods.getName(),
+	    		                                  goods.getMinPrice(),goods.getMaxPrice(),strWebName);
+	    //System.out.println(elsValue);
+	    return getGoods(elsValue);
+	}
 
 	@Override
 	public String listItemByDesc(String index) {
 	    String elsValue = elasticsearch.getItemDesc(index);
 	    return getGoods(elsValue);
+	}
+	@Override
+	public String listWebName() {
+        String sql = "select WEB_NAME from WEB";
+        List<String> listVarchar = new ArrayList<String>();
+        List<String> listChar = new ArrayList<String>();
+        List<String> listInt = new ArrayList<String>();
+        List<JSONObject> list = new ArrayList<>();
+        try {
+            ResultSet rs = db.getResultSet(db.connectDatase(), sql);
+            if (rs != null) {
+                ResultSetMetaData columns = rs.getMetaData();
+                int i = 0;
+                while (i < columns.getColumnCount()) {  // แยก data type พร้อมเก็บลง list
+                    i++;
+                    // เก็บชื่อ column
+                    if (columns.getColumnTypeName(i) == ("INTEGER")) {  
+                        listInt.add(columns.getColumnName(i).toLowerCase());
+                    } else if (columns.getColumnTypeName(i) == "CHAR") {
+                        listChar.add(columns.getColumnName(i).toLowerCase()); //columns.getColumnName(i).toLowerCase()
+                    } else {
+                        listVarchar.add(columns.getColumnName(i).toLowerCase());
+                    }
+                }
+                while (rs.next()) {
+                    JSONObject obj = new JSONObject();
+                    for (i = 0; i < listInt.size(); i++) {
+                        obj.put(json.changeKeyUpperCase(listInt.get(i)), rs.getInt(listInt.get(i)));
+                    }
+                    for (i = 0; i < listVarchar.size(); i++) {
+                        obj.put(json.changeKeyUpperCase(listVarchar.get(i)), rs.getString(listVarchar.get(i)));
+                    }
+                    for (i = 0; i < listChar.size(); i++) {
+                        String value = rs.getString(listChar.get(i));
+                        if ("1".equals(value)) {
+                            obj.put(json.changeKeyUpperCase(listChar.get(i)), true);
+                        } else {
+                            obj.put(json.changeKeyUpperCase(listChar.get(i)), false);
+                        }
+                    }
+
+                    list.add(obj);
+                }
+            }
+        } catch (Exception e) {
+        	System.out.println(e.getMessage());
+        } finally {
+            db.closeConnect(db.connectDatase());
+        }
+        return list.toString();
+	
 	}
 	
 	//method
@@ -62,5 +135,10 @@ public class ServiceMobileApiImpl implements ServiceMobileApi{
 			return json.toString();
 		}		
 	}
+
+
+
+
+
 	
 }

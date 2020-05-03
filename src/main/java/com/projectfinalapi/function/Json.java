@@ -24,4 +24,23 @@ public class Json {
         }
         return newStr;
 	}	
+	public String webNameJson(String[] webName) {
+		String str = "";
+		if(webName.length == 1) {
+			for(String s : webName) {
+				str = str+"{\"match_phrase\": {\"webName\": \""+s+"\"}}";
+			}
+		}
+		else if(webName.length > 1){
+			for(String s : webName) {
+				str = str+"{\"match_phrase\": {\"webName\": \""+s+"\"}},";
+			}
+		}
+		// ตัดตัวสุดท้ายออกถ้าเป็น ,
+	    if (str != null && str.length() > 0 && str.charAt(str.length() - 1) == ',') {
+	    	str = str.substring(0, str.length() - 1);
+	    }
+		
+		return str;
+	}
 }

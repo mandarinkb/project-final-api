@@ -40,7 +40,7 @@ public class MobileRestApi {
     
     @Autowired
     private ApiResponse  apiResponse; 
-      
+    
     @PostMapping(path = {"/name"}, headers = "Accept=application/json;charset=UTF-8")
     public ResponseEntity<?>  name(@RequestBody GoodsDTO goods){
     	String index = q.findOneStrExcuteQuery("select DATABASE_NAME from SWITCH_DATABASE where DATABASE_STATUS = 1");  
@@ -54,6 +54,29 @@ public class MobileRestApi {
         	return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
         }else {
             String serviceValue = serviceMobileApi.listName(index, name);
+            if(error.isServiceError(serviceValue)) {
+            	JSONObject json = new JSONObject(serviceValue);
+            	String error = apiResponse.error(dateTime.timestamp(), 400, "Bad Request", json.getString("error"), "/mobile/name");
+            	return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+            }else {
+            	return ResponseEntity.ok(serviceValue); 
+            }	
+        }  
+    }
+    
+    @PostMapping(path = {"/name-and-filter"}, headers = "Accept=application/json;charset=UTF-8")
+    public ResponseEntity<?>  nameFilter(@RequestBody GoodsDTO goods){
+    	String index = q.findOneStrExcuteQuery("select DATABASE_NAME from SWITCH_DATABASE where DATABASE_STATUS = 1");  
+        //String index = swdb.getDatabaseRun();
+        String name = goods.getName();
+        if(index.isEmpty()) {
+        	String error = apiResponse.error(dateTime.timestamp(), 400, "Bad Request", "index is empty", "/mobile/name");
+        	return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+        }else if(name.isEmpty()) {
+        	String error = apiResponse.error(dateTime.timestamp(), 400, "Bad Request", "name is empty", "/mobile/name");
+        	return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+        }else {
+            String serviceValue = serviceMobileApi.listNameAndFilter(index, goods);
             if(error.isServiceError(serviceValue)) {
             	JSONObject json = new JSONObject(serviceValue);
             	String error = apiResponse.error(dateTime.timestamp(), 400, "Bad Request", json.getString("error"), "/mobile/name");
@@ -102,6 +125,11 @@ public class MobileRestApi {
             	return ResponseEntity.ok(serviceValue); 
             }
         }
+    }
+    
+    @GetMapping(path = {"/web-name"}, headers = "Accept=application/json;charset=UTF-8")
+    public ResponseEntity<?> webName(){
+    	return ResponseEntity.ok(serviceMobileApi.listWebName()); 
     }
 }
 
