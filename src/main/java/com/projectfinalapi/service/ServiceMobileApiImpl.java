@@ -41,16 +41,14 @@ public class ServiceMobileApiImpl implements ServiceMobileApi{
 	@Override
 	public String listNameAndFilter(String index, GoodsDTO goods) {		
 		String strWebName = json.webNameJson(goods.getWebName());
-		//System.out.println(strWebName);
 	    String elsValue = elasticsearch.getByNameAndFilter(index, goods.getName(),
 	    		                                  goods.getMinPrice(),goods.getMaxPrice(),strWebName);
-	    //System.out.println(elsValue);
 	    return getGoods(elsValue);
 	}
 
 	@Override
-	public String listItemByDesc(String index) {
-	    String elsValue = elasticsearch.getItemDesc(index);
+	public String listItemByDesc(String index, String from) {
+	    String elsValue = elasticsearch.getItemDesc(index,from);
 	    return getGoods(elsValue);
 	}
 	@Override
@@ -104,7 +102,34 @@ public class ServiceMobileApiImpl implements ServiceMobileApi{
         return list.toString();
 	
 	}
-	
+
+	//count
+	@Override
+	public String listCountCategory(String index, String category) {
+        String elsValue = elasticsearch.countByCategory(index, category);        
+        return countGoods(elsValue);
+	}
+
+	@Override
+	public String listCountName(String index, String name) {
+	    String elsValue = elasticsearch.countByName(index, name);
+	    return countGoods(elsValue);
+	}
+
+	@Override
+	public String listCountItemByDesc(String index) {
+	    String elsValue = elasticsearch.countItemDesc(index);
+	    return countGoods(elsValue);
+	}
+
+	@Override
+	public String listCountNameAndFilter(String index, GoodsDTO goods) {
+		String strWebName = json.webNameJson(goods.getWebName());
+	    String elsValue = elasticsearch.countByNameAndFilter(index, goods.getName(),
+	    		                                  goods.getMinPrice(),goods.getMaxPrice(),strWebName);
+	    return countGoods(elsValue);
+	}
+
 	//method
 	public String getGoods(String elsValue){
 		List<JSONObject> list = new ArrayList<>();
@@ -135,10 +160,23 @@ public class ServiceMobileApiImpl implements ServiceMobileApi{
 			return json.toString();
 		}		
 	}
-
-
-
-
-
 	
+	public String countGoods(String elsValue){
+		List<JSONObject> list = new ArrayList<>();
+		try {
+	        //ดึงเอาาค่าที่ต้องการเพื่อส่งไปยัง api
+			JSONObject json = new JSONObject();
+	        JSONObject objResultsValue = new JSONObject(elsValue);
+	        int count = objResultsValue.getInt("count");
+	        json.put("count", count);	
+	        list.add(json); 
+	        return list.toString();
+		}catch(Exception e) {
+			// ส่ง error กลับ
+			JSONObject json = new JSONObject();
+			json.put("error", e.getMessage());			
+			return json.toString();
+		}		
+	}
+
 }

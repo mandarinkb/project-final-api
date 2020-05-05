@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.projectfinalapi.function.ApiResponse;
@@ -41,6 +42,7 @@ public class MobileRestApi {
     @Autowired
     private ApiResponse  apiResponse; 
     
+    //search
     @PostMapping(path = {"/name"}, headers = "Accept=application/json;charset=UTF-8")
     public ResponseEntity<?>  name(@RequestBody GoodsDTO goods){
     	String index = q.findOneStrExcuteQuery("select DATABASE_NAME from SWITCH_DATABASE where DATABASE_STATUS = 1");  
@@ -110,13 +112,14 @@ public class MobileRestApi {
     }
     
     @GetMapping(path = {"/items"}, headers = "Accept=application/json;charset=UTF-8")
-    public ResponseEntity<?> item(){
+    public ResponseEntity<?> item(@RequestParam("from") String from){
+    	System.out.println(from);
         String index = q.findOneStrExcuteQuery("select DATABASE_NAME from SWITCH_DATABASE where DATABASE_STATUS = 1");     
         if(index.isEmpty()) {
         	String error = apiResponse.error(dateTime.timestamp(), 400, "Bad Request", "index is empty", "/mobile/item");
         	return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
         }else {
-            String serviceValue = serviceMobileApi.listItemByDesc(index);              
+            String serviceValue = serviceMobileApi.listItemByDesc(index,from);              
             if(error.isServiceError(serviceValue)) {
             	JSONObject json = new JSONObject(serviceValue);
             	String error = apiResponse.error(dateTime.timestamp(), 400, "Bad Request", json.getString("error"), "/mobile/item");
@@ -130,6 +133,93 @@ public class MobileRestApi {
     @GetMapping(path = {"/web-name"}, headers = "Accept=application/json;charset=UTF-8")
     public ResponseEntity<?> webName(){
     	return ResponseEntity.ok(serviceMobileApi.listWebName()); 
+    }
+    
+    //count
+    @PostMapping(path = {"/count-name"}, headers = "Accept=application/json;charset=UTF-8")
+    public ResponseEntity<?>  countName(@RequestBody GoodsDTO goods){
+    	String index = q.findOneStrExcuteQuery("select DATABASE_NAME from SWITCH_DATABASE where DATABASE_STATUS = 1");  
+        //String index = swdb.getDatabaseRun();
+        String name = goods.getName();
+        if(index.isEmpty()) {
+        	String error = apiResponse.error(dateTime.timestamp(), 400, "Bad Request", "index is empty", "/mobile/name");
+        	return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+        }else if(name.isEmpty()) {
+        	String error = apiResponse.error(dateTime.timestamp(), 400, "Bad Request", "name is empty", "/mobile/name");
+        	return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+        }else {
+            String serviceValue = serviceMobileApi.listCountName(index, name);
+            if(error.isServiceError(serviceValue)) {
+            	JSONObject json = new JSONObject(serviceValue);
+            	String error = apiResponse.error(dateTime.timestamp(), 400, "Bad Request", json.getString("error"), "/mobile/name");
+            	return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+            }else {
+            	return ResponseEntity.ok(serviceValue); 
+            }	
+        }  
+    }
+    
+    @PostMapping(path = {"/count-name-and-filter"}, headers = "Accept=application/json;charset=UTF-8")
+    public ResponseEntity<?>  countNameFilter(@RequestBody GoodsDTO goods){
+    	String index = q.findOneStrExcuteQuery("select DATABASE_NAME from SWITCH_DATABASE where DATABASE_STATUS = 1");  
+        //String index = swdb.getDatabaseRun();
+        String name = goods.getName();
+        if(index.isEmpty()) {
+        	String error = apiResponse.error(dateTime.timestamp(), 400, "Bad Request", "index is empty", "/mobile/name");
+        	return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+        }else if(name.isEmpty()) {
+        	String error = apiResponse.error(dateTime.timestamp(), 400, "Bad Request", "name is empty", "/mobile/name");
+        	return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+        }else {
+            String serviceValue = serviceMobileApi.listCountNameAndFilter(index, goods);
+            if(error.isServiceError(serviceValue)) {
+            	JSONObject json = new JSONObject(serviceValue);
+            	String error = apiResponse.error(dateTime.timestamp(), 400, "Bad Request", json.getString("error"), "/mobile/name");
+            	return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+            }else {
+            	return ResponseEntity.ok(serviceValue); 
+            }	
+        }  
+    }
+    @PostMapping(path = {"/count-category"}, headers = "Accept=application/json;charset=UTF-8")
+    public ResponseEntity<?> countCategory(@RequestBody GoodsDTO goods){
+    	String index = q.findOneStrExcuteQuery("select DATABASE_NAME from SWITCH_DATABASE where DATABASE_STATUS = 1");  
+        // String index = swdb.getDatabaseRun();
+        String category = goods.getCategory();        
+        if(index.isEmpty()) {
+        	String error = apiResponse.error(dateTime.timestamp(), 400, "Bad Request", "index is empty", "/mobile/category");
+        	return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+        }else if(category.isEmpty()) {
+        	String error = apiResponse.error(dateTime.timestamp(), 400, "Bad Request", "category is empty", "/mobile/category");
+        	return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+        }else {
+            String serviceValue = serviceMobileApi.listCountCategory(index, category);              
+            if(error.isServiceError(serviceValue)) {
+            	JSONObject json = new JSONObject(serviceValue);
+            	String error = apiResponse.error(dateTime.timestamp(), 400, "Bad Request", json.getString("error"), "/mobile/category");
+            	return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+            }else {
+            	return ResponseEntity.ok(serviceValue); 
+            }
+        }
+    }
+    
+    @GetMapping(path = {"/count-items"}, headers = "Accept=application/json;charset=UTF-8")
+    public ResponseEntity<?> countItem(){
+        String index = q.findOneStrExcuteQuery("select DATABASE_NAME from SWITCH_DATABASE where DATABASE_STATUS = 1");     
+        if(index.isEmpty()) {
+        	String error = apiResponse.error(dateTime.timestamp(), 400, "Bad Request", "index is empty", "/mobile/item");
+        	return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+        }else {
+            String serviceValue = serviceMobileApi.listCountItemByDesc(index);              
+            if(error.isServiceError(serviceValue)) {
+            	JSONObject json = new JSONObject(serviceValue);
+            	String error = apiResponse.error(dateTime.timestamp(), 400, "Bad Request", json.getString("error"), "/mobile/item");
+            	return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+            }else {
+            	return ResponseEntity.ok(serviceValue); 
+            }
+        }
     }
 }
 
