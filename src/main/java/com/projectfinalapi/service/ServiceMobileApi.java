@@ -4,11 +4,11 @@ import com.projectfinalapi.model.GoodsDTO;
 
 public interface ServiceMobileApi {
 	//search
-    String listCategory(String index,String category);
-    String listName(String index,String name);
+    String listCategory(String index,String category,String from);
+    String listName(String index,String name,String from);
     String listItemByDesc(String index, String from);
     String listWebName();
-    String listNameAndFilter(String index, GoodsDTO goods);
+    String listNameAndFilter(String index, GoodsDTO goods,String from);
     
     //count
     String listCountCategory(String index,String category);

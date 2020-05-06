@@ -44,7 +44,9 @@ public class MobileRestApi {
     
     //search
     @PostMapping(path = {"/name"}, headers = "Accept=application/json;charset=UTF-8")
-    public ResponseEntity<?>  name(@RequestBody GoodsDTO goods){
+    public ResponseEntity<?>  name(@RequestBody GoodsDTO goods,
+    		                       @RequestParam("from") String from){
+    	System.out.println(from);
     	String index = q.findOneStrExcuteQuery("select DATABASE_NAME from SWITCH_DATABASE where DATABASE_STATUS = 1");  
         //String index = swdb.getDatabaseRun();
         String name = goods.getName();
@@ -55,7 +57,7 @@ public class MobileRestApi {
         	String error = apiResponse.error(dateTime.timestamp(), 400, "Bad Request", "name is empty", "/mobile/name");
         	return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
         }else {
-            String serviceValue = serviceMobileApi.listName(index, name);
+            String serviceValue = serviceMobileApi.listName(index, name, from);
             if(error.isServiceError(serviceValue)) {
             	JSONObject json = new JSONObject(serviceValue);
             	String error = apiResponse.error(dateTime.timestamp(), 400, "Bad Request", json.getString("error"), "/mobile/name");
@@ -67,7 +69,9 @@ public class MobileRestApi {
     }
     
     @PostMapping(path = {"/name-and-filter"}, headers = "Accept=application/json;charset=UTF-8")
-    public ResponseEntity<?>  nameFilter(@RequestBody GoodsDTO goods){
+    public ResponseEntity<?>  nameFilter(@RequestBody GoodsDTO goods,
+    		                             @RequestParam("from") String from){
+    	System.out.println(from);
     	String index = q.findOneStrExcuteQuery("select DATABASE_NAME from SWITCH_DATABASE where DATABASE_STATUS = 1");  
         //String index = swdb.getDatabaseRun();
         String name = goods.getName();
@@ -78,7 +82,7 @@ public class MobileRestApi {
         	String error = apiResponse.error(dateTime.timestamp(), 400, "Bad Request", "name is empty", "/mobile/name");
         	return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
         }else {
-            String serviceValue = serviceMobileApi.listNameAndFilter(index, goods);
+            String serviceValue = serviceMobileApi.listNameAndFilter(index, goods, from);
             if(error.isServiceError(serviceValue)) {
             	JSONObject json = new JSONObject(serviceValue);
             	String error = apiResponse.error(dateTime.timestamp(), 400, "Bad Request", json.getString("error"), "/mobile/name");
@@ -89,7 +93,9 @@ public class MobileRestApi {
         }  
     }
     @PostMapping(path = {"/category"}, headers = "Accept=application/json;charset=UTF-8")
-    public ResponseEntity<?> category(@RequestBody GoodsDTO goods){
+    public ResponseEntity<?> category(@RequestBody GoodsDTO goods, 
+    		                          @RequestParam("from") String from){
+    	System.out.println(from);
     	String index = q.findOneStrExcuteQuery("select DATABASE_NAME from SWITCH_DATABASE where DATABASE_STATUS = 1");  
         // String index = swdb.getDatabaseRun();
         String category = goods.getCategory();        
@@ -100,7 +106,7 @@ public class MobileRestApi {
         	String error = apiResponse.error(dateTime.timestamp(), 400, "Bad Request", "category is empty", "/mobile/category");
         	return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
         }else {
-            String serviceValue = serviceMobileApi.listCategory(index, category);              
+            String serviceValue = serviceMobileApi.listCategory(index, category ,from);              
             if(error.isServiceError(serviceValue)) {
             	JSONObject json = new JSONObject(serviceValue);
             	String error = apiResponse.error(dateTime.timestamp(), 400, "Bad Request", json.getString("error"), "/mobile/category");

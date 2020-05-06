@@ -27,22 +27,22 @@ public class ServiceMobileApiImpl implements ServiceMobileApi{
  
 
 	@Override
-	public String listCategory(String index,String inputCategory) {
-        String elsValue = elasticsearch.getByCategory(index, inputCategory);        
+	public String listCategory(String index,String inputCategory,String from) {
+        String elsValue = elasticsearch.getByCategory(index, inputCategory,from);        
         return getGoods(elsValue);
 	}
 
 	@Override
-	public String listName(String index,String name) {
-	    String elsValue = elasticsearch.getByName(index, name);
+	public String listName(String index,String name,String from) {
+	    String elsValue = elasticsearch.getByName(index, name,from);
 	    return getGoods(elsValue);
 	}
 	
 	@Override
-	public String listNameAndFilter(String index, GoodsDTO goods) {		
+	public String listNameAndFilter(String index, GoodsDTO goods,String from) {		
 		String strWebName = json.webNameJson(goods.getWebName());
 	    String elsValue = elasticsearch.getByNameAndFilter(index, goods.getName(),
-	    		                                  goods.getMinPrice(),goods.getMaxPrice(),strWebName);
+	    		                                  goods.getMinPrice(),goods.getMaxPrice(),strWebName,from);
 	    return getGoods(elsValue);
 	}
 
