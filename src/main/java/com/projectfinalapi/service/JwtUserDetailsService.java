@@ -17,6 +17,7 @@ import com.projectfinalapi.model.UserDto;
 
 @Service
 public class JwtUserDetailsService implements UserDetailsService {
+	
 	@Autowired
 	private DateTime  dateTime;  
 	
@@ -38,14 +39,13 @@ public class JwtUserDetailsService implements UserDetailsService {
         return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(),new ArrayList<>());
     }
 
-    //public DAOUser save(User user) {
     public String save(UserDto user){
         DAOUser newUser = new DAOUser();
         newUser.setUsername(user.getUsername());
         newUser.setPassword(bcryptEncoder.encode(user.getPassword()));
         newUser.setRole("user");  //เขียนเพิ่ม
-        //return userDao.save(newUser);
         userDao.save(newUser);
         return apiResponse.users(dateTime.timestamp(), 201, user.getUsername(), "user");
     }
+    
 }

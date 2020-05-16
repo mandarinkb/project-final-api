@@ -11,16 +11,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.projectfinalapi.function.ApiResponse;
+import com.projectfinalapi.function.BCrypt;
 import com.projectfinalapi.function.DateTime;
 import com.projectfinalapi.function.Json;
 import com.projectfinalapi.model.Database;
 import com.projectfinalapi.model.Query;
 import com.projectfinalapi.model.ScheduleDto;
 import com.projectfinalapi.model.SwitchDatabaseDto;
+import com.projectfinalapi.model.UserDto;
 import com.projectfinalapi.model.WebDto;
 
 @Service
 public class ServiceWebScrappongControlImp implements ServiceWebScrappingControl {
+	@Autowired
+	private BCrypt bcypt;
+	
 	@Autowired
 	private Json json;
 	
@@ -125,13 +130,37 @@ public class ServiceWebScrappongControlImp implements ServiceWebScrappingControl
     }  
     
     @Override
-    public String updateUsers(int id, String role) {
-    	String username = q.findOneStrExcuteQuery("select USERNAME from USERS where USER_ID= '"+id+"' ");
-        String sql = "update USERS set ROLE = '" + role + "' where USER_ID =" + id;
-        Connection conn = db.connectDatase();
-        db.executeQuery(conn, sql);
-        db.closeConnect(conn);
-        return apiResponse.users(dateTime.timestamp(), 200, username, role);
+    //public String updateUsers(int id, String role) {
+    public String updateUsers(int id, UserDto user) {
+    	if(user.getPassword() == null) {// กรณีไม่เปลี่ยนรหัสผ่าน
+		       String sql = "update USERS set USERNAME = '" + user.getUsername()+ "' ,"
+	                   + " ROLE = '" + user.getRole() + "' where USER_ID = " + id;
+		       Connection conn = db.connectDatase();
+		       db.executeQuery(conn, sql);
+		       db.closeConnect(conn);
+		       return apiResponse.users(dateTime.timestamp(), 200, user.getUsername(), user.getRole());
+    	}else {
+    		String encodedPassword = q.findOneStrExcuteQuery("select PASSWORD from USERS where USER_ID= '"+id+"' ");
+    		// เช็ครหัสผ่านว่าตรงกับของเดิมไหม
+    		if(bcypt.isPasswordMatch(user.getPassword(), encodedPassword)) {// กรณีตรง
+    		       String sql = "update USERS set USERNAME = '" + user.getUsername()+ "' , PASSWORD = '" + bcypt.encodedPassword(user.getNewPassword()) + "' ,"
+    	                   + " ROLE = '" + user.getRole() + "' where USER_ID = " + id;
+    		        Connection conn = db.connectDatase();
+    		        db.executeQuery(conn, sql);
+    		        db.closeConnect(conn);
+    		        return apiResponse.users(dateTime.timestamp(), 200, user.getUsername(), user.getRole());
+    		}else {// กรณีไมตรง
+    			return apiResponse.error(dateTime.timestamp(), 400, "Bad Request", "password not match", "/api/users");
+    		}
+    	}
+
+    	//String username = q.findOneStrExcuteQuery("select USERNAME from USERS where USER_ID= '"+id+"' ");
+        //String sql = "update USERS set ROLE = '" + role + "' where USER_ID =" + id;
+    	
+        //Connection conn = db.connectDatase();
+        //db.executeQuery(conn, sql);
+        //db.closeConnect(conn);
+        //return apiResponse.users(dateTime.timestamp(), 200, user.getUsername(), user.getRole());
     }
     
     @Override

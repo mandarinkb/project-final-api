@@ -77,7 +77,7 @@ public class RestApiController {
     	  return new ResponseEntity<>(userDetailsService.save(userDto), HttpStatus.CREATED);
       } else {
       	String error = apiResponse.error(dateTime.timestamp(), 400, "Bad Request",
-      			                        "That username is already taken. Try using a different name.", "/api/register");
+      			                        "That username is already taken. Try using a different name.", "/api/users");
       	return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
       }
   }    
@@ -101,7 +101,7 @@ public class RestApiController {
 
   @PutMapping(path = {"/users/{id}"}, headers = "Accept=application/json;charset=UTF-8")
   public ResponseEntity<?> updateUsers(@RequestBody UserDto userDto, @PathVariable("id") int id) {
-      return ResponseEntity.ok(serviceWebScrappongControl.updateUsers(id, userDto.getRole()));
+      return ResponseEntity.ok(serviceWebScrappongControl.updateUsers(id, userDto));
   }  
   
   @DeleteMapping(path = {"/users/{id}"}, headers = "Accept=application/json;charset=UTF-8")

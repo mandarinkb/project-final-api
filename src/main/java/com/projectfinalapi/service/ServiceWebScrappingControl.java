@@ -2,12 +2,14 @@ package com.projectfinalapi.service;
 
 import com.projectfinalapi.model.ScheduleDto;
 import com.projectfinalapi.model.SwitchDatabaseDto;
+import com.projectfinalapi.model.UserDto;
 import com.projectfinalapi.model.WebDto;
 
 public interface ServiceWebScrappingControl {
     public String findUsers();
     public String findUsersById(int id);
-    public String updateUsers(int id, String role);    
+    //public String updateUsers(int id, String role); 
+    public String updateUsers(int id, UserDto user); 
     public String deleteUsers(int id);
     
     public String saveWeb(WebDto web); 
