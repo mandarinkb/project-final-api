@@ -87,6 +87,12 @@ public class RestApiController {
 	  return ResponseEntity.ok(serviceWebScrappongControl.findUsers());
   }
   
+  // get for role user
+  @GetMapping(path = {"/user/{id}"}, headers = "Accept=application/json;charset=UTF-8")
+  public ResponseEntity<?> readUserId(@PathVariable("id") int id) {
+	  return ResponseEntity.ok(serviceWebScrappongControl.findUserId(id));
+  } 
+  
   @GetMapping(path = {"/users/{id}"}, headers = "Accept=application/json;charset=UTF-8")
   public ResponseEntity<?> readUsersById(@PathVariable("id") int id) {
 	  String serviceValue = serviceWebScrappongControl.findUsersById(id);

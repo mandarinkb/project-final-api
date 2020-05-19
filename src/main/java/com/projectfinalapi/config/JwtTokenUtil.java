@@ -66,6 +66,8 @@ public class JwtTokenUtil  {
     //   compaction of the JWT to a URL-safe string 
     private String doGenerateToken(Map<String, Object> claims, String username) {
         String role = q.findOneStrExcuteQuery("select ROLE from USERS where USERNAME= '"+username+"' ");
+        String id = q.findOneStrExcuteQuery("select USER_ID from USERS where USERNAME= '"+username+"' ");
+        claims.put("id", id);
         claims.put("role", role); // เพิ่ม role เข้าไปที่ playload
         
         return Jwts.builder()

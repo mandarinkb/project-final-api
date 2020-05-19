@@ -7,8 +7,8 @@ import com.projectfinalapi.model.WebDto;
 
 public interface ServiceWebScrappingControl {
     public String findUsers();
-    public String findUsersById(int id);
-    //public String updateUsers(int id, String role); 
+    public String findUserId(int id);
+    public String findUsersById(int id); // for edit
     public String updateUsers(int id, UserDto user); 
     public String deleteUsers(int id);
     

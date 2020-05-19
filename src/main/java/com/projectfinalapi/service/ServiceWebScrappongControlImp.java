@@ -91,6 +91,57 @@ public class ServiceWebScrappongControlImp implements ServiceWebScrappingControl
         }
         return list.toString();
     }
+    
+	@Override
+	public String findUserId(int id) {
+        String sql = "select * from USERS where USER_ID =" + id;;
+        List<String> listVarchar = new ArrayList<String>();
+        List<String> listChar = new ArrayList<String>();
+        List<String> listInt = new ArrayList<String>();
+        List<JSONObject> list = new ArrayList<>();
+        try {
+            ResultSet rs = db.getResultSet(db.connectDatase(), sql);
+            if (rs != null) {
+                ResultSetMetaData columns = rs.getMetaData();
+                int i = 0;
+                while (i < columns.getColumnCount()) {  // แยก data type พร้อมเก็บลง list
+                    i++;
+                    // เก็บชื่อ column
+                    if (columns.getColumnTypeName(i) == ("INTEGER")) {  
+                        listInt.add(columns.getColumnName(i).toLowerCase());
+                    } else if (columns.getColumnTypeName(i) == "CHAR") {
+                        listChar.add(columns.getColumnName(i).toLowerCase()); //columns.getColumnName(i).toLowerCase()
+                    } else {
+                        listVarchar.add(columns.getColumnName(i).toLowerCase());
+                    }
+                }
+                while (rs.next()) {
+                    JSONObject obj = new JSONObject();
+                    for (i = 0; i < listInt.size(); i++) {
+                        obj.put(json.changeKeyUpperCase(listInt.get(i)), rs.getInt(listInt.get(i)));
+                    }
+                    for (i = 0; i < listVarchar.size(); i++) {
+                        obj.put(json.changeKeyUpperCase(listVarchar.get(i)), rs.getString(listVarchar.get(i)));
+                    }
+                    for (i = 0; i < listChar.size(); i++) {
+                        String value = rs.getString(listChar.get(i));
+                        if ("1".equals(value)) {
+                            obj.put(json.changeKeyUpperCase(listChar.get(i)), true);
+                        } else {
+                            obj.put(json.changeKeyUpperCase(listChar.get(i)), false);
+                        }
+                    }
+
+                    list.add(obj);
+                }
+            }
+        } catch (Exception e) {
+        	System.out.println(e.getMessage());
+        } finally {
+            db.closeConnect(db.connectDatase());
+        }
+        return list.toString();
+	}
 
     @Override
     public String findUsersById(int id) {
@@ -545,6 +596,8 @@ public class ServiceWebScrappongControlImp implements ServiceWebScrappingControl
         db.closeConnect(conn);
         return apiResponse.delete(dateTime.timestamp(), 204, "deleted successfully");
 	}
+
+
 
 
 
