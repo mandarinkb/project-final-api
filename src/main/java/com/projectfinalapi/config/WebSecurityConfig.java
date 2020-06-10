@@ -57,6 +57,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 // dont authenticate this particular request
                 .authorizeRequests().antMatchers("/mobile/**",
                 		                         "/api/register",
+                		                         "/api/logout",
                                                  "/api/authenticate").permitAll(). //"/api/users/**"
                 antMatchers(HttpMethod.OPTIONS, "/**").permitAll(). // ต้องมีคำสั่งบรรทัดนี้ถึงจะส่ง token จาก angular ได้
                 //antMatchers(HttpMethod.POST, "/login").permitAll().

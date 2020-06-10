@@ -46,7 +46,7 @@ public class MobileRestApi {
     @PostMapping(path = {"/name"}, headers = "Accept=application/json;charset=UTF-8")
     public ResponseEntity<?>  name(@RequestBody GoodsDTO goods,
     		                       @RequestParam("from") String from){
-    	System.out.println(from);
+    	
     	String index = q.findOneStrExcuteQuery("select DATABASE_NAME from SWITCH_DATABASE where DATABASE_STATUS = 1");  
         //String index = swdb.getDatabaseRun();
         String name = goods.getName();
@@ -71,7 +71,7 @@ public class MobileRestApi {
     @PostMapping(path = {"/name-and-filter"}, headers = "Accept=application/json;charset=UTF-8")
     public ResponseEntity<?>  nameFilter(@RequestBody GoodsDTO goods,
     		                             @RequestParam("from") String from){
-    	System.out.println(from);
+    
     	String index = q.findOneStrExcuteQuery("select DATABASE_NAME from SWITCH_DATABASE where DATABASE_STATUS = 1");  
         //String index = swdb.getDatabaseRun();
         String name = goods.getName();
@@ -95,7 +95,7 @@ public class MobileRestApi {
     @PostMapping(path = {"/category"}, headers = "Accept=application/json;charset=UTF-8")
     public ResponseEntity<?> category(@RequestBody GoodsDTO goods, 
     		                          @RequestParam("from") String from){
-    	System.out.println(from);
+    	
     	String index = q.findOneStrExcuteQuery("select DATABASE_NAME from SWITCH_DATABASE where DATABASE_STATUS = 1");  
         // String index = swdb.getDatabaseRun();
         String category = goods.getCategory();        
@@ -119,7 +119,7 @@ public class MobileRestApi {
     
     @GetMapping(path = {"/items"}, headers = "Accept=application/json;charset=UTF-8")
     public ResponseEntity<?> item(@RequestParam("from") String from){
-    	System.out.println(from);
+    	
         String index = q.findOneStrExcuteQuery("select DATABASE_NAME from SWITCH_DATABASE where DATABASE_STATUS = 1");     
         if(index.isEmpty()) {
         	String error = apiResponse.error(dateTime.timestamp(), 400, "Bad Request", "index is empty", "/mobile/item");
