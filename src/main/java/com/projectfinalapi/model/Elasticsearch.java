@@ -100,6 +100,22 @@ public class Elasticsearch {
         return values.toString();
     }
     
+    public String getLog(String fromValue ) {
+        String values = null;
+        try {
+        	Unirest.setTimeouts(0, 0);
+        	HttpResponse<String> response = Unirest.post(elasIp+"web_scrapping_log/_search")
+        	  .header("Content-Type", "application/json")
+        	  .body("{\"from\": "+fromValue+",\"size\": "+elaSizeValue+",\"sort\": {\"timestamp\": \"desc\"},\"query\": {\"match_all\": {}}}")
+        	  .asString();
+            values = response.getBody();
+        } catch (UnirestException ex) {
+            Logger.getLogger(Elasticsearch.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return values.toString();
+    }
+    
+/*    
     //count
     public String countByCategory(String index, String category) {
         String values = null;
@@ -180,4 +196,5 @@ public class Elasticsearch {
         }
         return values.toString();
     }
+*/    
 }

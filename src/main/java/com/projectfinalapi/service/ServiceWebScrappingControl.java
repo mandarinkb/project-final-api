@@ -32,4 +32,6 @@ public interface ServiceWebScrappingControl {
     public String updateSwitchDatabase(int id, SwitchDatabaseDto switchDatabase);
     public String deleteSwitchDatabase(int databaseId);
     
+    public String listLog(String from);
+    
 }

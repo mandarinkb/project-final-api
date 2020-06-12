@@ -102,7 +102,7 @@ public class ServiceMobileApiImpl implements ServiceMobileApi{
         return list.toString();
 	
 	}
-
+/*
 	//count
 	@Override
 	public String listCountCategory(String index, String category) {
@@ -129,6 +129,28 @@ public class ServiceMobileApiImpl implements ServiceMobileApi{
 	    		                                  goods.getMinPrice(),goods.getMaxPrice(),strWebName);
 	    return countGoods(elsValue);
 	}
+
+	
+	public String countGoods(String elsValue){
+		List<JSONObject> list = new ArrayList<>();
+		try {
+	        //ดึงเอาาค่าที่ต้องการเพื่อส่งไปยัง api
+			JSONObject json = new JSONObject();
+	        JSONObject objResultsValue = new JSONObject(elsValue);
+	        int count = objResultsValue.getInt("count");
+	        json.put("count", count);	
+	        list.add(json); 
+	        return list.toString();
+		}catch(Exception e) {
+			// ส่ง error กลับ
+			JSONObject json = new JSONObject();
+			json.put("error", e.getMessage());			
+			return json.toString();
+		}		
+	}
+*/
+	
+	
 
 	//method
 	public String getGoods(String elsValue){
@@ -160,23 +182,4 @@ public class ServiceMobileApiImpl implements ServiceMobileApi{
 			return json.toString();
 		}		
 	}
-	
-	public String countGoods(String elsValue){
-		List<JSONObject> list = new ArrayList<>();
-		try {
-	        //ดึงเอาาค่าที่ต้องการเพื่อส่งไปยัง api
-			JSONObject json = new JSONObject();
-	        JSONObject objResultsValue = new JSONObject(elsValue);
-	        int count = objResultsValue.getInt("count");
-	        json.put("count", count);	
-	        list.add(json); 
-	        return list.toString();
-		}catch(Exception e) {
-			// ส่ง error กลับ
-			JSONObject json = new JSONObject();
-			json.put("error", e.getMessage());			
-			return json.toString();
-		}		
-	}
-
 }

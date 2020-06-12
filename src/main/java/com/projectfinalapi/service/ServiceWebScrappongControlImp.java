@@ -6,6 +6,7 @@ import java.sql.ResultSetMetaData;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ import com.projectfinalapi.function.BCrypt;
 import com.projectfinalapi.function.DateTime;
 import com.projectfinalapi.function.Json;
 import com.projectfinalapi.model.Database;
+import com.projectfinalapi.model.Elasticsearch;
 import com.projectfinalapi.model.Query;
 import com.projectfinalapi.model.ScheduleDto;
 import com.projectfinalapi.model.SwitchDatabaseDto;
@@ -40,6 +42,9 @@ public class ServiceWebScrappongControlImp implements ServiceWebScrappingControl
 
     @Autowired
     private ApiResponse apiResponse;
+    
+    @Autowired
+    private Elasticsearch  elasticsearch;
     
     @Override
     public String findUsers() {
@@ -597,8 +602,37 @@ public class ServiceWebScrappongControlImp implements ServiceWebScrappingControl
         return apiResponse.delete(dateTime.timestamp(), 204, "deleted successfully");
 	}
 
-
-
-
+	@Override
+	public String listLog(String from) {
+        String elsValue = elasticsearch.getLog(from);        
+        return getLog(elsValue);
+	}
+	
+	//method
+	public String getLog(String elsValue){
+		List<JSONObject> list = new ArrayList<>();
+		try {
+	        //ดึงเอาาค่าที่ต้องการเพื่อส่งไปยัง api	        
+	        JSONObject objResultsValue = new JSONObject(elsValue);
+	        JSONObject objHits = objResultsValue.getJSONObject("hits");
+	        JSONArray arrHits = objHits.getJSONArray("hits");
+	        JSONObject json = new JSONObject();
+	        for (int i = 0; i < arrHits.length(); i++) {
+	        	json = new JSONObject();
+	            JSONObject objSource = arrHits.getJSONObject(i).getJSONObject("_source");	            
+	            json.put("username", objSource.getString("username"));
+	            json.put("type", objSource.getString("type"));
+	            json.put("message", objSource.getString("message"));
+	            json.put("timestamp", objSource.getString("timestamp"));
+	            list.add(json);   
+	        }	  
+	        return list.toString();
+		}catch(Exception e) {
+			// ส่ง error กลับ
+			JSONObject json = new JSONObject();
+			json.put("error", e.getMessage());			
+			return json.toString();
+		}		
+	}
 
 }

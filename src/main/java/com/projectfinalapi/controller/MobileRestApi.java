@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.projectfinalapi.function.ApiResponse;
 import com.projectfinalapi.function.CheckError;
 import com.projectfinalapi.function.DateTime;
+import com.projectfinalapi.function.Log;
 import com.projectfinalapi.function.SwitchDatabase;
 import com.projectfinalapi.model.GoodsDTO;
 import com.projectfinalapi.model.Query;
@@ -24,6 +25,9 @@ import com.projectfinalapi.service.ServiceMobileApi;
 @RestController
 @RequestMapping("/mobile")
 public class MobileRestApi {
+	@Autowired
+	private Log log;
+	
 	@Autowired
 	private Query q;
 	
@@ -42,11 +46,12 @@ public class MobileRestApi {
     @Autowired
     private ApiResponse  apiResponse; 
     
-    //search
+    //ค้นหา
     @PostMapping(path = {"/name"}, headers = "Accept=application/json;charset=UTF-8")
     public ResponseEntity<?>  name(@RequestBody GoodsDTO goods,
     		                       @RequestParam("from") String from){
     	
+    	log.createLog(dateTime.timestamp(), "user", "search", "search "+goods.getName());  // เก็บ log
     	String index = q.findOneStrExcuteQuery("select DATABASE_NAME from SWITCH_DATABASE where DATABASE_STATUS = 1");  
         //String index = swdb.getDatabaseRun();
         String name = goods.getName();
@@ -65,13 +70,15 @@ public class MobileRestApi {
             }else {
             	return ResponseEntity.ok(serviceValue); 
             }	
-        }  
+        } 
     }
     
+    //ค้นหาโดยใช้ filter
     @PostMapping(path = {"/name-and-filter"}, headers = "Accept=application/json;charset=UTF-8")
     public ResponseEntity<?>  nameFilter(@RequestBody GoodsDTO goods,
     		                             @RequestParam("from") String from){
     
+    	log.createLog(dateTime.timestamp(), "user", "filter search", "filter search "+goods.getName());  // เก็บ log
     	String index = q.findOneStrExcuteQuery("select DATABASE_NAME from SWITCH_DATABASE where DATABASE_STATUS = 1");  
         //String index = swdb.getDatabaseRun();
         String name = goods.getName();
@@ -92,10 +99,13 @@ public class MobileRestApi {
             }	
         }  
     }
+    
+    //ค้นหาโดยเลือกหมวดหมู่
     @PostMapping(path = {"/category"}, headers = "Accept=application/json;charset=UTF-8")
     public ResponseEntity<?> category(@RequestBody GoodsDTO goods, 
     		                          @RequestParam("from") String from){
     	
+    	log.createLog(dateTime.timestamp(), "user", "category", "select category "+goods.getCategory());  // เก็บ log
     	String index = q.findOneStrExcuteQuery("select DATABASE_NAME from SWITCH_DATABASE where DATABASE_STATUS = 1");  
         // String index = swdb.getDatabaseRun();
         String category = goods.getCategory();        
@@ -117,6 +127,7 @@ public class MobileRestApi {
         }
     }
     
+    //สินค้าหน้าแรก
     @GetMapping(path = {"/items"}, headers = "Accept=application/json;charset=UTF-8")
     public ResponseEntity<?> item(@RequestParam("from") String from){
     	
@@ -135,12 +146,12 @@ public class MobileRestApi {
             }
         }
     }
-    
+    // เลือก web name from filter
     @GetMapping(path = {"/web-name"}, headers = "Accept=application/json;charset=UTF-8")
     public ResponseEntity<?> webName(){
     	return ResponseEntity.ok(serviceMobileApi.listWebName()); 
     }
-    
+/*    
     //count
     @PostMapping(path = {"/count-name"}, headers = "Accept=application/json;charset=UTF-8")
     public ResponseEntity<?>  countName(@RequestBody GoodsDTO goods){
@@ -227,5 +238,6 @@ public class MobileRestApi {
             }
         }
     }
+*/    
 }
 

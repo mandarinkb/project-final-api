@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.projectfinalapi.config.JwtTokenUtil;
@@ -249,6 +250,11 @@ public class RestApiController {
 	  String swDb = q.findOneStrExcuteQuery("select DATABASE_NAME from SWITCH_DATABASE where DATABASE_ID="+id);
 	  log.createLog(dateTime.timestamp(), this.usernameFromLogin, "delete", "delete switch-database name "+swDb);  // เก็บ log
       return new ResponseEntity<>(serviceWebScrappongControl.deleteSwitchDatabase(id), HttpStatus.NO_CONTENT);
+  }
+  
+  @GetMapping(path = {"/log"}, headers = "Accept=application/json;charset=UTF-8")
+  public ResponseEntity<?>  getLog(@RequestParam("from") String from) {
+	  return ResponseEntity.ok(serviceWebScrappongControl.listLog(from));
   }
   
   private void authenticate(String username, String password) throws Exception {
