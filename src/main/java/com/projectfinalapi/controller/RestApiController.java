@@ -252,10 +252,18 @@ public class RestApiController {
       return new ResponseEntity<>(serviceWebScrappongControl.deleteSwitchDatabase(id), HttpStatus.NO_CONTENT);
   }
   
-  @GetMapping(path = {"/log"}, headers = "Accept=application/json;charset=UTF-8")
+/*  @GetMapping(path = {"/log"}, headers = "Accept=application/json;charset=UTF-8")
   public ResponseEntity<?>  getLog(@RequestParam("from") String from) {
 	  return ResponseEntity.ok(serviceWebScrappongControl.listLog(from));
   }
+*/
+  @PostMapping(path = {"/log"}, headers = "Accept=application/json;charset=UTF-8")
+  public ResponseEntity<?>  getLog(@RequestBody String bodyStr) {
+	  JSONObject json = new JSONObject(bodyStr);
+	  String timestamp = json.getString("timestamp");
+	  return ResponseEntity.ok(serviceWebScrappongControl.listLog(timestamp));
+  }
+  
   
   private void authenticate(String username, String password) throws Exception {
       try {

@@ -99,7 +99,7 @@ public class Elasticsearch {
         }
         return values.toString();
     }
-    
+/*    
     public String getLog(String fromValue ) {
         String values = null;
         try {
@@ -108,6 +108,23 @@ public class Elasticsearch {
         	  .header("Content-Type", "application/json")
         	  .body("{\"from\": "+fromValue+",\"size\": "+elaSizeValue+",\"sort\": {\"timestamp\": \"desc\"},\"query\": {\"match_all\": {}}}")
         	  .asString();
+            values = response.getBody();
+        } catch (UnirestException ex) {
+            Logger.getLogger(Elasticsearch.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return values.toString();
+    }
+*/    
+    
+    public String getLog(String timestamp) {
+        String values = null;
+        try {
+        	Unirest.setTimeouts(0, 0);
+        	HttpResponse<String> response = Unirest.post("http://localhost:9200/web_scrapping_log/_search")
+        	  .header("Content-Type", "application/json")
+        	  .body("{\"query\": {\"bool\": {\"must\": {\"match_phrase\": {\"timestamp\": \""+timestamp+"\"}}}}}")
+        	  .asString();
+
             values = response.getBody();
         } catch (UnirestException ex) {
             Logger.getLogger(Elasticsearch.class.getName()).log(Level.SEVERE, null, ex);

@@ -602,9 +602,15 @@ public class ServiceWebScrappongControlImp implements ServiceWebScrappingControl
         return apiResponse.delete(dateTime.timestamp(), 204, "deleted successfully");
 	}
 
-	@Override
+/*	@Override
 	public String listLog(String from) {
         String elsValue = elasticsearch.getLog(from);        
+        return getLog(elsValue);
+	}
+*/	
+	@Override
+	public String listLog(String timestemp) {
+        String elsValue = elasticsearch.getLog(timestemp);        
         return getLog(elsValue);
 	}
 	
