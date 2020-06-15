@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.projectfinalapi.config.JwtRequestFilter;
 import com.projectfinalapi.config.JwtTokenUtil;
 import com.projectfinalapi.function.ApiResponse;
 import com.projectfinalapi.function.CheckError;
@@ -38,6 +39,9 @@ import com.projectfinalapi.service.ServiceWebScrappingControl;
 @RestController
 @RequestMapping("/api")
 public class RestApiController {
+  @Autowired
+  private JwtRequestFilter jwt;
+  
   @Autowired
   private Log log;
 	
@@ -64,8 +68,7 @@ public class RestApiController {
   
   @Autowired
   private ServiceWebScrappingControl serviceWebScrappongControl;
-  
-  private String usernameFromLogin = null; 
+ 
   
   @PostMapping(path = {"/authenticate"}, headers = "Accept=application/json;charset=UTF-8")    
   public ResponseEntity<?> createAuthenticationToken(@RequestBody UserDto userDto) throws Exception {
@@ -74,16 +77,15 @@ public class RestApiController {
       final String token = jwtTokenUtil.generateToken(userDetails);      
       String response = apiResponse.authenticate(dateTime.timestamp(), 200, token);
       
-      this.usernameFromLogin = userDto.getUsername();
       log.createLog(dateTime.timestamp(), userDto.getUsername(), "login", "Login");  // เก็บ log
       return new ResponseEntity<>(response, HttpStatus.OK);
   }
-  @GetMapping(path = {"/logout"}, headers = "Accept=application/json;charset=UTF-8")
+  @PostMapping(path = {"/logout"}, headers = "Accept=application/json;charset=UTF-8")
   public ResponseEntity<?> logOut() {
+	  System.out.println(jwt.usernameFromToken);
 	  JSONObject json = new JSONObject();
 	  json.put("message", "logout");
-	  
-	  log.createLog(dateTime.timestamp(), this.usernameFromLogin, "logout", "Logout");  // เก็บ log
+	  log.createLog(dateTime.timestamp(), jwt.usernameFromToken, "logout", "Logout");  // เก็บ log
 	  return ResponseEntity.ok(json.toString());
   }
   
@@ -94,27 +96,27 @@ public class RestApiController {
       // check ว่ามีผู้ใช้นี้อยู่ในระบบหรือไม่
       if (userDb.equals("")) {
     	  
-    	  log.createLog(dateTime.timestamp(), this.usernameFromLogin, "create", "create username "+userDto.getUsername());  // เก็บ log
+    	  log.createLog(dateTime.timestamp(), jwt.usernameFromToken, "create", "create username "+userDto.getUsername());  // เก็บ log
     	  return new ResponseEntity<>(userDetailsService.save(userDto), HttpStatus.CREATED);
       } else {
       	String error = apiResponse.error(dateTime.timestamp(), 400, "Bad Request",
       			                        "That username is already taken. Try using a different name.", "/api/users");
       
-      	log.createLog(dateTime.timestamp(), this.usernameFromLogin, "error", "That username is already taken. Try using a different name.");  // เก็บ log
+      	log.createLog(dateTime.timestamp(), jwt.usernameFromToken, "error", "That username is already taken. Try using a different name.");  // เก็บ log
       	return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
       }
   }    
 
   @GetMapping(path = {"/users"}, headers = "Accept=application/json;charset=UTF-8")
   public ResponseEntity<?> readUsers() {
-	  log.createLog(dateTime.timestamp(), this.usernameFromLogin, "read", "read users");  // เก็บ log
+	  log.createLog(dateTime.timestamp(), jwt.usernameFromToken, "read", "read users");  // เก็บ log
 	  return ResponseEntity.ok(serviceWebScrappongControl.findUsers());
   }
   
   // get for role user
   @GetMapping(path = {"/user/{id}"}, headers = "Accept=application/json;charset=UTF-8")
   public ResponseEntity<?> readUserId(@PathVariable("id") int id) {
-	  log.createLog(dateTime.timestamp(), this.usernameFromLogin, "read", "read from id (for role user)");  // เก็บ log
+	  log.createLog(dateTime.timestamp(), jwt.usernameFromToken, "read", "read from id (for role user)");  // เก็บ log
 	  return ResponseEntity.ok(serviceWebScrappongControl.findUserId(id));
   } 
   
@@ -125,130 +127,130 @@ public class RestApiController {
 	  if(error.isFindUsersByIdError(serviceValue)) {
 	      String error = apiResponse.error(dateTime.timestamp(), 400, "Bad Request",
                                            "Not found users", "/api/users/");
-	      log.createLog(dateTime.timestamp(), this.usernameFromLogin, "error", "Not found users");  // เก็บ log
+	      log.createLog(dateTime.timestamp(), jwt.usernameFromToken, "error", "Not found users");  // เก็บ log
           return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
 	  }else {
-		  log.createLog(dateTime.timestamp(), this.usernameFromLogin, "read", "read from id (for role admin)");  // เก็บ log
+		  log.createLog(dateTime.timestamp(), jwt.usernameFromToken, "read", "read from id (for role admin)");  // เก็บ log
 		  return ResponseEntity.ok(serviceValue);
 	  }
   }   
 
   @PutMapping(path = {"/users/{id}"}, headers = "Accept=application/json;charset=UTF-8")
   public ResponseEntity<?> updateUsers(@RequestBody UserDto userDto, @PathVariable("id") int id) {
-	  log.createLog(dateTime.timestamp(), this.usernameFromLogin, "update", "update username "+userDto.getUsername()+" role "+userDto.getRole()+" or chanege new password");  // เก็บ log
+	  log.createLog(dateTime.timestamp(), jwt.usernameFromToken, "update", "update username "+userDto.getUsername()+" role "+userDto.getRole()+" or chanege new password");  // เก็บ log
       return ResponseEntity.ok(serviceWebScrappongControl.updateUsers(id, userDto));
   }  
   
   @DeleteMapping(path = {"/users/{id}"}, headers = "Accept=application/json;charset=UTF-8")
   public ResponseEntity<?> deleteUsers(@PathVariable("id") int id){
 	  String userDb = q.findOneStrExcuteQuery("select USERNAME from USERS where USER_ID="+id);
-	  log.createLog(dateTime.timestamp(), this.usernameFromLogin, "delete", "delete username"+userDb);  // เก็บ log
+	  log.createLog(dateTime.timestamp(), jwt.usernameFromToken, "delete", "delete username"+userDb);  // เก็บ log
 	  return new ResponseEntity<>(serviceWebScrappongControl.deleteUsers(id), HttpStatus.NO_CONTENT);
   }
 
   @PostMapping(path = {"/web"}, headers = "Accept=application/json;charset=UTF-8")
   public ResponseEntity<?> createWeb(@RequestBody WebDto web) {
-	  log.createLog(dateTime.timestamp(), this.usernameFromLogin, "create", "create web "+web.getWebName());  // เก็บ log
+	  log.createLog(dateTime.timestamp(), jwt.usernameFromToken, "create", "create web "+web.getWebName());  // เก็บ log
 	  return new ResponseEntity<>(serviceWebScrappongControl.saveWeb(web), HttpStatus.CREATED);
   }   
   
   @GetMapping(path = {"/web"}, headers = "Accept=application/json;charset=UTF-8")
   public ResponseEntity<?> findWeb() {
-	  log.createLog(dateTime.timestamp(), this.usernameFromLogin, "read", "read web");  // เก็บ log
+	  log.createLog(dateTime.timestamp(), jwt.usernameFromToken, "read", "read web");  // เก็บ log
       return ResponseEntity.ok(serviceWebScrappongControl.findWeb());
   }
   
   @GetMapping(path = {"/web/{id}"}, headers = "Accept=application/json;charset=UTF-8")
   public ResponseEntity<?> findWebId(@PathVariable("id") int id) {
-	  log.createLog(dateTime.timestamp(), this.usernameFromLogin, "read", "read web from id");  // เก็บ log
+	  log.createLog(dateTime.timestamp(), jwt.usernameFromToken, "read", "read web from id");  // เก็บ log
 	  return ResponseEntity.ok(serviceWebScrappongControl.findWebById(id));
   }
   
   @PutMapping(path = {"/web-status/{id}"}, headers = "Accept=application/json;charset=UTF-8")
   public ResponseEntity<?> updateWebStatus(@RequestBody WebDto web, @PathVariable("id") int id) {
-	  log.createLog(dateTime.timestamp(), this.usernameFromLogin, "update", "update web status "+web.getWebName());  // เก็บ log
+	  log.createLog(dateTime.timestamp(), jwt.usernameFromToken, "update", "update web status "+web.getWebName());  // เก็บ log
 	  return ResponseEntity.ok(serviceWebScrappongControl.updateWebStatus(id, web.getWebStatus()));
   }
 
   @PutMapping(path = {"/web/{id}"}, headers = "Accept=application/json;charset=UTF-8")
   public ResponseEntity<?>  updateWeb(@RequestBody WebDto webDto, @PathVariable("id") int id) {
-	  log.createLog(dateTime.timestamp(), this.usernameFromLogin, "update", "update web "+webDto.getWebName());  // เก็บ log
+	  log.createLog(dateTime.timestamp(), jwt.usernameFromToken, "update", "update web "+webDto.getWebName());  // เก็บ log
 	  return ResponseEntity.ok(serviceWebScrappongControl.updateWeb(id , webDto));
   }    
 
   @DeleteMapping(path = {"/web/{id}"}, headers = "Accept=application/json;charset=UTF-8")
   public ResponseEntity<?>  deleteWeb(@PathVariable("id") int id){
 	  String webDb = q.findOneStrExcuteQuery("select WEB_NAME from WEB where Web_ID="+id);
-	  log.createLog(dateTime.timestamp(), this.usernameFromLogin, "delete", "delete web name "+webDb);  // เก็บ log
+	  log.createLog(dateTime.timestamp(), jwt.usernameFromToken, "delete", "delete web name "+webDb);  // เก็บ log
       return new ResponseEntity<>(serviceWebScrappongControl.deleteWeb(id), HttpStatus.NO_CONTENT);
   }
 
   @PostMapping(path = {"/schedule"}, headers = "Accept=application/json;charset=UTF-8")
   public ResponseEntity<?>  createSchedule(@RequestBody ScheduleDto scheduleDto) {
-	  log.createLog(dateTime.timestamp(), this.usernameFromLogin, "create", "create schedule "+scheduleDto.getScheduleName());  // เก็บ log
+	  log.createLog(dateTime.timestamp(), jwt.usernameFromToken, "create", "create schedule "+scheduleDto.getScheduleName());  // เก็บ log
       return new ResponseEntity<>(serviceWebScrappongControl.saveSchedule(scheduleDto), HttpStatus.CREATED);
   }
   
   @GetMapping(path = {"/schedule"}, headers = "Accept=application/json;charset=UTF-8")
   public ResponseEntity<?>  readSchedule() {
-	  log.createLog(dateTime.timestamp(), this.usernameFromLogin, "read", "read schedule");  // เก็บ log
+	  log.createLog(dateTime.timestamp(), jwt.usernameFromToken, "read", "read schedule");  // เก็บ log
       return ResponseEntity.ok(serviceWebScrappongControl.findSchedule());
   }
 
   @GetMapping(path = {"/schedule/{id}"}, headers = "Accept=application/json;charset=UTF-8")
   public ResponseEntity<?>  readScheduleId(@PathVariable("id") int id) {
-	  log.createLog(dateTime.timestamp(), this.usernameFromLogin, "read", "read schedule from id");  // เก็บ log
+	  log.createLog(dateTime.timestamp(), jwt.usernameFromToken, "read", "read schedule from id");  // เก็บ log
 	  return ResponseEntity.ok(serviceWebScrappongControl.findScheduleById(id));
   }
 
   @PutMapping(path = {"/schedule/{id}"}, headers = "Accept=application/json;charset=UTF-8")
   public ResponseEntity<?>  updateSchedule(@RequestBody ScheduleDto scheduleDto, @PathVariable("id") int id) {
-	  log.createLog(dateTime.timestamp(), this.usernameFromLogin, "update", "update schedule "+scheduleDto.getScheduleName());  // เก็บ log
+	  log.createLog(dateTime.timestamp(), jwt.usernameFromToken, "update", "update schedule "+scheduleDto.getScheduleName());  // เก็บ log
 	  return ResponseEntity.ok(serviceWebScrappongControl.updateSchedule(id, scheduleDto));
   }
 
   @DeleteMapping(path = {"/schedule/{id}"}, headers = "Accept=application/json;charset=UTF-8")
   public ResponseEntity<?>  deleteSchedule(@PathVariable("id") int id){
 	  String scheduleDb = q.findOneStrExcuteQuery("select SCHEDULE_NAME from SCHEDULE where SCHEDULE_ID="+id);
-	  log.createLog(dateTime.timestamp(), this.usernameFromLogin, "delete", "delete schedule name "+scheduleDb);  // เก็บ log
+	  log.createLog(dateTime.timestamp(), jwt.usernameFromToken, "delete", "delete schedule name "+scheduleDb);  // เก็บ log
       return new ResponseEntity<>(serviceWebScrappongControl.deleteSchedule(id), HttpStatus.NO_CONTENT);
   }
   
   @PostMapping(path = {"/switch-database"}, headers = "Accept=application/json;charset=UTF-8")
   public ResponseEntity<?>  createSwitchDatabase(@RequestBody SwitchDatabaseDto switchDatabaseDto) {
-	  log.createLog(dateTime.timestamp(), this.usernameFromLogin, "create", "create switch-database "+switchDatabaseDto.getDatabaseName());  // เก็บ log
+	  log.createLog(dateTime.timestamp(), jwt.usernameFromToken, "create", "create switch-database "+switchDatabaseDto.getDatabaseName());  // เก็บ log
 	  return new ResponseEntity<>(serviceWebScrappongControl.saveSwitchDatabase(switchDatabaseDto), HttpStatus.CREATED);
   }
   
   @GetMapping(path = {"/switch-database"}, headers = "Accept=application/json;charset=UTF-8")
   public ResponseEntity<?>  readSwitchDatabase() {
-	  log.createLog(dateTime.timestamp(), this.usernameFromLogin, "read", "read switch-database");  // เก็บ log
+	  log.createLog(dateTime.timestamp(), jwt.usernameFromToken, "read", "read switch-database");  // เก็บ log
       return ResponseEntity.ok(serviceWebScrappongControl.findSwitchDatabase());
   }
 
   @GetMapping(path = {"/switch-database/{id}"}, headers = "Accept=application/json;charset=UTF-8")
   public ResponseEntity<?>  readSwitchDatabaseId(@PathVariable("id") int id) {
-	  log.createLog(dateTime.timestamp(), this.usernameFromLogin, "read", "read switch-database from id");  // เก็บ log
+	  log.createLog(dateTime.timestamp(), jwt.usernameFromToken, "read", "read switch-database from id");  // เก็บ log
 	  return ResponseEntity.ok(serviceWebScrappongControl.findSwitchDatabaseleById(id));
   }
 
   @PutMapping(path = {"/switch-database-status/{id}"}, headers = "Accept=application/json;charset=UTF-8")
   public ResponseEntity<?> updateSwitchDatabaseStatus(@RequestBody SwitchDatabaseDto switchDatabaseDto, @PathVariable("id") int id) {
 	  String swDb = q.findOneStrExcuteQuery("select DATABASE_NAME from SWITCH_DATABASE where DATABASE_ID="+id);
-	  log.createLog(dateTime.timestamp(), this.usernameFromLogin, "update", "update switch-database-status "+swDb);  // เก็บ log
+	  log.createLog(dateTime.timestamp(), jwt.usernameFromToken, "update", "update switch-database-status "+swDb);  // เก็บ log
 	  return ResponseEntity.ok(serviceWebScrappongControl.updateSwitchDatabaseStatus(id, switchDatabaseDto.getDatabaseStatus()));
   }
   
   @PutMapping(path = {"/switch-database/{id}"}, headers = "Accept=application/json;charset=UTF-8")
   public ResponseEntity<?>  updateSwitchDatabase(@RequestBody SwitchDatabaseDto switchDatabaseDto, @PathVariable("id") int id) {
-	  log.createLog(dateTime.timestamp(), this.usernameFromLogin, "update", "update switch-database "+switchDatabaseDto.getDatabaseName());  // เก็บ log
+	  log.createLog(dateTime.timestamp(), jwt.usernameFromToken, "update", "update switch-database "+switchDatabaseDto.getDatabaseName());  // เก็บ log
       return ResponseEntity.ok(serviceWebScrappongControl.updateSwitchDatabase(id, switchDatabaseDto));
   }
 
   @DeleteMapping(path = {"/switch-database/{id}"}, headers = "Accept=application/json;charset=UTF-8")
   public ResponseEntity<?>  deleteSwitchDatabase(@PathVariable("id") int id){
 	  String swDb = q.findOneStrExcuteQuery("select DATABASE_NAME from SWITCH_DATABASE where DATABASE_ID="+id);
-	  log.createLog(dateTime.timestamp(), this.usernameFromLogin, "delete", "delete switch-database name "+swDb);  // เก็บ log
+	  log.createLog(dateTime.timestamp(), jwt.usernameFromToken, "delete", "delete switch-database name "+swDb);  // เก็บ log
       return new ResponseEntity<>(serviceWebScrappongControl.deleteSwitchDatabase(id), HttpStatus.NO_CONTENT);
   }
   
@@ -259,6 +261,7 @@ public class RestApiController {
 */
   @PostMapping(path = {"/log"}, headers = "Accept=application/json;charset=UTF-8")
   public ResponseEntity<?>  getLog(@RequestBody String bodyStr) {
+	  System.out.println(bodyStr);
 	  JSONObject json = new JSONObject(bodyStr);
 	  String timestamp = json.getString("timestamp");
 	  return ResponseEntity.ok(serviceWebScrappongControl.listLog(timestamp));

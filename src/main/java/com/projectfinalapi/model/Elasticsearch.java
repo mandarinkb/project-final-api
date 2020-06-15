@@ -120,10 +120,14 @@ public class Elasticsearch {
         String values = null;
         try {
         	Unirest.setTimeouts(0, 0);
-        	HttpResponse<String> response = Unirest.post("http://localhost:9200/web_scrapping_log/_search")
+        	HttpResponse<String> response = Unirest.post(elasIp+"web_scrapping_log/_search")
         	  .header("Content-Type", "application/json")
-        	  .body("{\"query\": {\"bool\": {\"must\": {\"match_phrase\": {\"timestamp\": \""+timestamp+"\"}}}}}")
+        	  .body("{\"from\": 0,"
+        	  		+ "\"size\": 1000,"
+        	  		+ "\"sort\": {\"timestamp\": \"desc\"},"
+        	  		+ "\"query\": {\"bool\": {\"must\": {\"match_phrase\": {\"timestamp\": \""+timestamp+"\"}}}}}")
         	  .asString();
+
 
             values = response.getBody();
         } catch (UnirestException ex) {

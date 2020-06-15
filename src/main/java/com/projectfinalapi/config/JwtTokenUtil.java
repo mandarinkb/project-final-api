@@ -27,15 +27,56 @@ public class JwtTokenUtil  {
     @Value("${jwt.secret}")
     private String secret;
 
-    //retrieve username from jwt token
+
+    
     public String getUsernameFromToken(String token) {
+    	String username;
+    	try {
+    		Claims claims = getClaimsFromToken(token);
+    		username = claims.getSubject();
+    	} catch (Exception e) {
+    		username = null;
+    	}
+    	return username;
+    }
+	private Claims getClaimsFromToken(String token) {
+		Claims claims;
+		try {
+			claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
+		} catch (Exception e) {
+			claims = null;
+		}
+		return claims;
+	}
+	public Date getExpirationDateFromToken(String token) {
+		Date expiration;
+		try {
+			Claims claims = getClaimsFromToken(token);
+			expiration = claims.getExpiration();
+		} catch (Exception e) {
+			expiration = null;
+		}
+		return expiration;
+	}
+	private boolean tokenExpire(String token) {
+		Date dataExpire = this.getExpirationDateFromToken(token);
+		if (dataExpire == null) {
+			return false;
+		}
+		return dataExpire.before(new Date());
+	}
+	
+    //retrieve username from jwt token
+    /*public String getUsernameFromToken(String token) {
         return getClaimFromToken(token, Claims::getSubject);
     }
+    
 
     //retrieve expiration date from jwt token
     public Date getExpirationDateFromToken(String token) {
         return getClaimFromToken(token, Claims::getExpiration);
     }
+    */
 
     public <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = getAllClaimsFromToken(token);
