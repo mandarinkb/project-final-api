@@ -51,7 +51,7 @@ public class MobileRestApi {
     public ResponseEntity<?>  name(@RequestBody GoodsDTO goods,
     		                       @RequestParam("from") String from){
     	
-    	log.createLog(dateTime.timestamp(), "user", "search", "search "+goods.getName());  // เก็บ log
+    	log.createLog(dateTime.datetime() ,dateTime.timestamp(), "user", "search", "search "+goods.getName());  // เก็บ log
     	String index = q.findOneStrExcuteQuery("select DATABASE_NAME from SWITCH_DATABASE where DATABASE_STATUS = 1");  
         //String index = swdb.getDatabaseRun();
         String name = goods.getName();
@@ -78,7 +78,7 @@ public class MobileRestApi {
     public ResponseEntity<?>  nameFilter(@RequestBody GoodsDTO goods,
     		                             @RequestParam("from") String from){
     
-    	log.createLog(dateTime.timestamp(), "user", "filter search", "filter search "+goods.getName());  // เก็บ log
+    	log.createLog(dateTime.datetime() ,dateTime.timestamp(), "user", "filter search", "filter search "+goods.getName());  // เก็บ log
     	String index = q.findOneStrExcuteQuery("select DATABASE_NAME from SWITCH_DATABASE where DATABASE_STATUS = 1");  
         //String index = swdb.getDatabaseRun();
         String name = goods.getName();
@@ -105,7 +105,7 @@ public class MobileRestApi {
     public ResponseEntity<?> category(@RequestBody GoodsDTO goods, 
     		                          @RequestParam("from") String from){
     	
-    	log.createLog(dateTime.timestamp(), "user", "category", "select category "+goods.getCategory());  // เก็บ log
+    	log.createLog(dateTime.datetime() ,dateTime.timestamp(), "user", "category", "select category "+goods.getCategory());  // เก็บ log
     	String index = q.findOneStrExcuteQuery("select DATABASE_NAME from SWITCH_DATABASE where DATABASE_STATUS = 1");  
         // String index = swdb.getDatabaseRun();
         String category = goods.getCategory();        

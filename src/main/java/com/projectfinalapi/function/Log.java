@@ -16,8 +16,9 @@ public class Log {
     @Value("${elasIp}")
     private String elasticsearch_ip;
 
-	public void createLog(String timestamp ,String username, String type, String message ) {
+	public void createLog(String datetime,String timestamp ,String username, String type, String message ) {
 		JSONObject json = new JSONObject();
+		json.put("datetime", datetime);
 		json.put("timestamp", timestamp);
 		json.put("username", username);
 		json.put("type",type);

@@ -116,7 +116,7 @@ public class Elasticsearch {
     }
 */    
     
-    public String getLog(String timestamp) {
+    public String getLog(String datetime) {
         String values = null;
         try {
         	Unirest.setTimeouts(0, 0);
@@ -125,7 +125,7 @@ public class Elasticsearch {
         	  .body("{\"from\": 0,"
         	  		+ "\"size\": 1000,"
         	  		+ "\"sort\": {\"timestamp\": \"desc\"},"
-        	  		+ "\"query\": {\"bool\": {\"must\": {\"match_phrase\": {\"timestamp\": \""+timestamp+"\"}}}}}")
+        	  		+ "\"query\": {\"bool\": {\"must\": {\"match_phrase\": {\"datetime\": \""+datetime+"\"}}}}}")
         	  .asString();
 
 
