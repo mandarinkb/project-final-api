@@ -40,9 +40,7 @@ public class ServiceMobileApiImpl implements ServiceMobileApi{
 	
 	@Override
 	public String listNameAndFilter(String index, GoodsDTO goods,String from) {		
-		String strWebName = json.webNameJson(goods.getWebName());
-	    String elsValue = elasticsearch.getByNameAndFilter(index, goods.getName(),
-	    		                                  goods.getMinPrice(),goods.getMaxPrice(),strWebName,from);
+	    String elsValue = elasticsearch.getByNameAndFilter(index, goods.getName(),goods.getMinPrice(),goods.getMaxPrice(),goods.getWebName(),from);
 	    return getGoods(elsValue);
 	}
 

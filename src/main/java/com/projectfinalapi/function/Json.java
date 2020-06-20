@@ -24,6 +24,7 @@ public class Json {
         }
         return newStr;
 	}	
+	
 	public String webNameJson(String[] webName) {
 		String str = "";
 		if(webName.length == 1) {
@@ -42,5 +43,28 @@ public class Json {
 	    }
 		
 		return str;
+	}
+	// ตัดคำที่มี space ออกแล้วเอามา search ใหม่
+	public String regxName(String strInput) {
+        String[] arrOfStr = strInput.split(" "); 
+        String regxJson = "";
+        if(arrOfStr.length == 1) {
+            for (String name : arrOfStr) {
+            	if(!name.isEmpty()) {
+            		regxJson = regxJson+"{\"regexp\": {\"name\": {\"value\": \"(.*)"+name+"(.*)\"}}}";
+            	}
+            }
+        }else if(arrOfStr.length > 1) {
+            for (String name : arrOfStr) {
+            	if(!name.isEmpty()) {
+            		regxJson = regxJson+"{\"regexp\": {\"name\": {\"value\": \"(.*)"+name+"(.*)\"}}},";
+            	}
+            }
+        }
+		// ตัดตัวสุดท้ายออกถ้าเป็น ,
+	    if (regxJson != null && regxJson.length() > 0 && regxJson.charAt(regxJson.length() - 1) == ',') {
+	    	regxJson = regxJson.substring(0, regxJson.length() - 1);
+	    }
+		return regxJson;
 	}
 }
