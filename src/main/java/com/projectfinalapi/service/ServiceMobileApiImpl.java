@@ -170,6 +170,8 @@ public class ServiceMobileApiImpl implements ServiceMobileApi{
 	            json.put("discount", objSource.getDouble("discount"));
 	            json.put("category", objSource.getString("category"));
 	            json.put("productUrl", objSource.getString("productUrl"));
+	            json.put("review", objSource.getString("review"));
+	            json.put("ratingScore", objSource.getString("ratingScore"));
 	            list.add(json);   
 	        }	  
 	        return list.toString();

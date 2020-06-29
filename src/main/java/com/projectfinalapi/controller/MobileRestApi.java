@@ -50,8 +50,11 @@ public class MobileRestApi {
     @PostMapping(path = {"/name"}, headers = "Accept=application/json;charset=UTF-8")
     public ResponseEntity<?>  name(@RequestBody GoodsDTO goods,
     		                       @RequestParam("from") String from){
+    	// fix bug เก็บ log เฉพาะเรียกครั้งแรก กรณีใช้ infinite-scroll
+    	if(from.equals("0")) {
+    		log.createLog(dateTime.datetime() ,dateTime.timestamp(), "user", "search", "search "+goods.getName());  // เก็บ log
+    	}
     	
-    	log.createLog(dateTime.datetime() ,dateTime.timestamp(), "user", "search", "search "+goods.getName());  // เก็บ log
     	String index = q.findOneStrExcuteQuery("select DATABASE_NAME from SWITCH_DATABASE where DATABASE_STATUS = 1");  
         //String index = swdb.getDatabaseRun();
         String name = goods.getName();
@@ -77,8 +80,11 @@ public class MobileRestApi {
     @PostMapping(path = {"/name-and-filter"}, headers = "Accept=application/json;charset=UTF-8")
     public ResponseEntity<?>  nameFilter(@RequestBody GoodsDTO goods,
     		                             @RequestParam("from") String from){
-    
-    	log.createLog(dateTime.datetime() ,dateTime.timestamp(), "user", "filter search", "filter search "+goods.getName());  // เก็บ log
+    	// fix bug เก็บ log เฉพาะเรียกครั้งแรก กรณีใช้ infinite-scroll
+    	if(from.equals("0")) {
+    		log.createLog(dateTime.datetime() ,dateTime.timestamp(), "user", "filter search", "filter search "+goods.getName());  // เก็บ log
+    	}
+    	
     	String index = q.findOneStrExcuteQuery("select DATABASE_NAME from SWITCH_DATABASE where DATABASE_STATUS = 1");  
         //String index = swdb.getDatabaseRun();
         String name = goods.getName();
@@ -104,8 +110,11 @@ public class MobileRestApi {
     @PostMapping(path = {"/category"}, headers = "Accept=application/json;charset=UTF-8")
     public ResponseEntity<?> category(@RequestBody GoodsDTO goods, 
     		                          @RequestParam("from") String from){
+    	// fix bug เก็บ log เฉพาะเรียกครั้งแรก กรณีใช้ infinite-scroll
+    	if(from.equals("0")) {
+    		log.createLog(dateTime.datetime() ,dateTime.timestamp(), "user", "category", "select category "+goods.getCategory());  // เก็บ log
+    	}
     	
-    	log.createLog(dateTime.datetime() ,dateTime.timestamp(), "user", "category", "select category "+goods.getCategory());  // เก็บ log
     	String index = q.findOneStrExcuteQuery("select DATABASE_NAME from SWITCH_DATABASE where DATABASE_STATUS = 1");  
         // String index = swdb.getDatabaseRun();
         String category = goods.getCategory();        
