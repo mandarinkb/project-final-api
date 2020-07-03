@@ -22,7 +22,28 @@ public class Elasticsearch {
     @Value("${elasIp}")
     private String elasIp;
 
-    //search
+    // หน้าแรก
+    public String getByNameHistory(String index, String[] historyName,String from) {
+    	String regxNameJson = json.historyRegxName(historyName);
+        String values = null;
+        try {
+        	Unirest.setTimeouts(0, 0);
+        	HttpResponse<String> response = Unirest.post(elasIp+index+"/_search")
+        	  .header("Content-Type", "application/json")
+        	  .body("{\"from\": "+from+",\"size\": "+elaSizeValue+",\n\"sort\": {\"discount\": \"desc\"},"
+        	  		+ "\"query\": {\"bool\": {\"should\": ["
+        	  		+ regxNameJson
+        	  		+ "]}}}")
+        	  .asString();
+            values = response.getBody();
+        } catch (UnirestException ex) {
+            Logger.getLogger(Elasticsearch.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return values.toString();
+    }
+    
+    
+    //search category
     public String getByCategory(String index, String category,String from) {
         String values = null;
         try {
@@ -88,7 +109,7 @@ public class Elasticsearch {
         }
         return values.toString();
     }   
-   
+/*   
     public String getItemDesc(String index,String fromValue ) {
         String values = null;
         try {
@@ -104,7 +125,7 @@ public class Elasticsearch {
         }
         return values.toString();
     } 
-    
+*/    
     public String getLog(String datetime) {
         String values = null;
         try {

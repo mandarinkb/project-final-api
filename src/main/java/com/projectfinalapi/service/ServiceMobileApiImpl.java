@@ -39,16 +39,18 @@ public class ServiceMobileApiImpl implements ServiceMobileApi{
 	}
 	
 	@Override
+	public String listHistory(String index, String[] history, String from) {
+		String elsValue = elasticsearch.getByNameHistory(index, history,from);
+		return getGoods(elsValue);
+	}
+	
+	@Override
 	public String listNameAndFilter(String index, GoodsDTO goods,String from) {		
 	    String elsValue = elasticsearch.getByNameAndFilter(index, goods.getName(),goods.getMinPrice(),goods.getMaxPrice(),goods.getWebName(),from);
 	    return getGoods(elsValue);
 	}
-
-	@Override
-	public String listItemByDesc(String index, String from) {
-	    String elsValue = elasticsearch.getItemDesc(index,from);
-	    return getGoods(elsValue);
-	}
+	
+	
 	@Override
 	public String listWebName() {
         String sql = "select WEB_NAME from WEB";
@@ -182,4 +184,6 @@ public class ServiceMobileApiImpl implements ServiceMobileApi{
 			return json.toString();
 		}		
 	}
+
+
 }

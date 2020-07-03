@@ -67,4 +67,27 @@ public class Json {
 	    }
 		return regxJson;
 	}
+	
+	// search history หน้าแรก
+	public String historyRegxName(String[] history) {
+        String regxJson = "";
+        if(history.length == 1) {
+            for (String name : history) {
+            	if(!name.isEmpty()) {
+            		regxJson = regxJson+"{\"regexp\": {\"name\": {\"value\": \"(.*)"+name+"(.*)\"}}}";
+            	}
+            }
+        }else if(history.length > 1) {
+            for (String name : history) {
+            	if(!name.isEmpty()) {
+            		regxJson = regxJson+"{\"regexp\": {\"name\": {\"value\": \"(.*)"+name+"(.*)\"}}},";
+            	}
+            }
+        }
+		// ตัดตัวสุดท้ายออกถ้าเป็น ,
+	    if (regxJson != null && regxJson.length() > 0 && regxJson.charAt(regxJson.length() - 1) == ',') {
+	    	regxJson = regxJson.substring(0, regxJson.length() - 1);
+	    }
+		return regxJson;
+	}
 }

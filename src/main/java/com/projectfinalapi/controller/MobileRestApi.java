@@ -137,18 +137,19 @@ public class MobileRestApi {
     }
     
     //สินค้าหน้าแรก
-    @GetMapping(path = {"/items"}, headers = "Accept=application/json;charset=UTF-8")
-    public ResponseEntity<?> item(@RequestParam("from") String from){
+    @PostMapping(path = {"/history-name"}, headers = "Accept=application/json;charset=UTF-8")
+    public ResponseEntity<?> item(@RequestBody GoodsDTO goods, 
+    		                      @RequestParam("from") String from){
     	
         String index = q.findOneStrExcuteQuery("select DATABASE_NAME from SWITCH_DATABASE where DATABASE_STATUS = 1");     
         if(index.isEmpty()) {
-        	String error = apiResponse.error(dateTime.timestamp(), 400, "Bad Request", "index is empty", "/mobile/item");
+        	String error = apiResponse.error(dateTime.timestamp(), 400, "Bad Request", "index is empty", "/mobile/history-name");
         	return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
         }else {
-            String serviceValue = serviceMobileApi.listItemByDesc(index,from);              
+            String serviceValue = serviceMobileApi.listHistory(index,goods.getHistory(),from);              
             if(error.isServiceError(serviceValue)) {
             	JSONObject json = new JSONObject(serviceValue);
-            	String error = apiResponse.error(dateTime.timestamp(), 400, "Bad Request", json.getString("error"), "/mobile/item");
+            	String error = apiResponse.error(dateTime.timestamp(), 400, "Bad Request", json.getString("error"), "/mobile/history-name");
             	return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
             }else {
             	return ResponseEntity.ok(serviceValue); 

@@ -7,6 +7,7 @@ public class GoodsDTO {
 	private String[] webName;
 	private String minPrice;
 	private String maxPrice;
+	private String[] history;
 	
 	public String getIndex() {
 		return index;
@@ -43,6 +44,12 @@ public class GoodsDTO {
 	}
 	public void setMaxPrice(String maxPrice) {
 		this.maxPrice = maxPrice;
+	}
+	public String[] getHistory() {
+		return history;
+	}
+	public void setHistory(String[] history) {
+		this.history = history;
 	}
 	
 }
