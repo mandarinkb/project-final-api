@@ -15,7 +15,7 @@ public class DAOUser {
 
     @Id
     @Column(name = "USER_ID") 
-    @GeneratedValue(strategy = GenerationType.IDENTITY)     //id auto increment
+    @GeneratedValue(strategy = GenerationType.IDENTITY) //id auto increment
     private long id;
     
     @Column(name = "USERNAME") 

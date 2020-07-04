@@ -14,7 +14,6 @@ public class BCrypt {
 	
 	public boolean isPasswordMatch(String password, String encodedPassword) {
 		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-		// String encodedPassword = passwordEncoder.encode(password);
 		return passwordEncoder.matches(password, encodedPassword);	
 	}
 	

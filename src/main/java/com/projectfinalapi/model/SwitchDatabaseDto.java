@@ -26,8 +26,5 @@ public class SwitchDatabaseDto {
 	}
 	public void setDatabaseStatus(String databaseStatus) {
 		this.databaseStatus = databaseStatus;
-	}
-	
-	
-	
+	}	
 }

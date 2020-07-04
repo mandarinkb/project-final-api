@@ -14,5 +14,4 @@ public class SwitchDatabase {
 		String dbRun = q.findOneStrExcuteQuery("select DATABASE_NAME from SWITCH_DATABASE where DATABASE_STATUS = 1");	
 		return dbRun;
 	}
-
 }

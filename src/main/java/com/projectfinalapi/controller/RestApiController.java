@@ -80,6 +80,7 @@ public class RestApiController {
       log.createLog(dateTime.datetime() , dateTime.timestamp(), userDto.getUsername(), "login", "Login");  // เก็บ log
       return new ResponseEntity<>(response, HttpStatus.OK);
   }
+  
   @PostMapping(path = {"/logout"}, headers = "Accept=application/json;charset=UTF-8")
   public ResponseEntity<?> logOut() {
 	  JSONObject json = new JSONObject();
@@ -119,7 +120,7 @@ public class RestApiController {
 	  return ResponseEntity.ok(serviceWebScrappongControl.findUserId(id));
   } 
   
-//get for role admin
+  //get for role admin
   @GetMapping(path = {"/users/{id}"}, headers = "Accept=application/json;charset=UTF-8")
   public ResponseEntity<?> readUsersById(@PathVariable("id") int id) {
 	  String serviceValue = serviceWebScrappongControl.findUsersById(id);
@@ -252,19 +253,13 @@ public class RestApiController {
 	  log.createLog(dateTime.datetime() ,dateTime.timestamp(), jwt.usernameFromToken, "delete", "delete switch-database name "+swDb);  // เก็บ log
       return new ResponseEntity<>(serviceWebScrappongControl.deleteSwitchDatabase(id), HttpStatus.NO_CONTENT);
   }
-  
-/*  @GetMapping(path = {"/log"}, headers = "Accept=application/json;charset=UTF-8")
-  public ResponseEntity<?>  getLog(@RequestParam("from") String from) {
-	  return ResponseEntity.ok(serviceWebScrappongControl.listLog(from));
-  }
-*/
+
   @PostMapping(path = {"/log"}, headers = "Accept=application/json;charset=UTF-8")
   public ResponseEntity<?>  getLog(@RequestBody String bodyStr) {
 	  JSONObject json = new JSONObject(bodyStr);
 	  String datetime = json.getString("datetime");
 	  return ResponseEntity.ok(serviceWebScrappongControl.listLog(datetime));
   }
-  
   
   private void authenticate(String username, String password) throws Exception {
       try {

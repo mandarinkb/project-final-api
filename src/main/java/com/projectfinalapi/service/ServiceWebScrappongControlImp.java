@@ -186,7 +186,6 @@ public class ServiceWebScrappongControlImp implements ServiceWebScrappingControl
     }  
     
     @Override
-    //public String updateUsers(int id, String role) {
     public String updateUsers(int id, UserDto user) {
     	if(user.getPassword() == null) {// กรณีไม่เปลี่ยนรหัสผ่าน
 		       String sql = "update USERS set USERNAME = '" + user.getUsername()+ "' ,"
@@ -209,14 +208,6 @@ public class ServiceWebScrappongControlImp implements ServiceWebScrappingControl
     			return apiResponse.error(dateTime.timestamp(), 400, "Bad Request", "password not match", "/api/users");
     		}
     	}
-
-    	//String username = q.findOneStrExcuteQuery("select USERNAME from USERS where USER_ID= '"+id+"' ");
-        //String sql = "update USERS set ROLE = '" + role + "' where USER_ID =" + id;
-    	
-        //Connection conn = db.connectDatase();
-        //db.executeQuery(conn, sql);
-        //db.closeConnect(conn);
-        //return apiResponse.users(dateTime.timestamp(), 200, user.getUsername(), user.getRole());
     }
     
     @Override
@@ -235,7 +226,6 @@ public class ServiceWebScrappongControlImp implements ServiceWebScrappingControl
         Connection conn = db.connectDatase();
         db.executeQuery(conn, sql);
         db.closeConnect(conn);
-        
         return apiResponse.web(dateTime.timestamp(), 201, web.getWebUrl());
     }
     
@@ -288,8 +278,6 @@ public class ServiceWebScrappongControlImp implements ServiceWebScrappingControl
         }
         return list.toString();
     }
-
-
 
     @Override
     public String findWebById(int web_id) {
@@ -602,12 +590,6 @@ public class ServiceWebScrappongControlImp implements ServiceWebScrappingControl
         return apiResponse.delete(dateTime.timestamp(), 204, "deleted successfully");
 	}
 
-/*	@Override
-	public String listLog(String from) {
-        String elsValue = elasticsearch.getLog(from);        
-        return getLog(elsValue);
-	}
-*/	
 	@Override
 	public String listLog(String timestemp) {
         String elsValue = elasticsearch.getLog(timestemp);        

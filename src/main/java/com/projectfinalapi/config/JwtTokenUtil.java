@@ -26,8 +26,6 @@ public class JwtTokenUtil  {
 
     @Value("${jwt.secret}")
     private String secret;
-
-
     
     public String getUsernameFromToken(String token) {
     	String username;
@@ -39,6 +37,7 @@ public class JwtTokenUtil  {
     	}
     	return username;
     }
+    
 	private Claims getClaimsFromToken(String token) {
 		Claims claims;
 		try {
@@ -48,6 +47,7 @@ public class JwtTokenUtil  {
 		}
 		return claims;
 	}
+	
 	public Date getExpirationDateFromToken(String token) {
 		Date expiration;
 		try {
@@ -58,6 +58,7 @@ public class JwtTokenUtil  {
 		}
 		return expiration;
 	}
+	
 	private boolean tokenExpire(String token) {
 		Date dataExpire = this.getExpirationDateFromToken(token);
 		if (dataExpire == null) {
@@ -65,18 +66,6 @@ public class JwtTokenUtil  {
 		}
 		return dataExpire.before(new Date());
 	}
-	
-    //retrieve username from jwt token
-    /*public String getUsernameFromToken(String token) {
-        return getClaimFromToken(token, Claims::getSubject);
-    }
-    
-
-    //retrieve expiration date from jwt token
-    public Date getExpirationDateFromToken(String token) {
-        return getClaimFromToken(token, Claims::getExpiration);
-    }
-    */
 
     public <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = getAllClaimsFromToken(token);
@@ -103,8 +92,6 @@ public class JwtTokenUtil  {
     //while creating the token -
     //1. Define  claims of the token, like Issuer, Expiration, Subject, and the ID
     //2. Sign the JWT using the HS512 algorithm and secret key.
-    //3. According to JWS Compact Serialization(https://tools.ietf.org/html/draft-ietf-jose-json-web-signature-41#section-3.1)
-    //   compaction of the JWT to a URL-safe string 
     private String doGenerateToken(Map<String, Object> claims, String username) {
         String role = q.findOneStrExcuteQuery("select ROLE from USERS where USERNAME= '"+username+"' ");
         String id = q.findOneStrExcuteQuery("select USER_ID from USERS where USERNAME= '"+username+"' ");
