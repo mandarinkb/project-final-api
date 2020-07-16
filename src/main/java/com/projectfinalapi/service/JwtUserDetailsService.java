@@ -43,9 +43,9 @@ public class JwtUserDetailsService implements UserDetailsService {
         DAOUser newUser = new DAOUser();
         newUser.setUsername(user.getUsername());
         newUser.setPassword(bcryptEncoder.encode(user.getPassword()));
-        newUser.setRole("user");  //เขียนเพิ่ม
+        newUser.setRole(user.getRole());  //เขียนเพิ่ม
         userDao.save(newUser);
-        return apiResponse.users(dateTime.timestamp(), 201, user.getUsername(), "user");
+        return apiResponse.users(dateTime.timestamp(), 201, user.getUsername(), user.getRole());
     }
     
 }

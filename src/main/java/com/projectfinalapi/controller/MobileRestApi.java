@@ -137,20 +137,26 @@ public class MobileRestApi {
     @PostMapping(path = {"/history-name"}, headers = "Accept=application/json;charset=UTF-8")
     public ResponseEntity<?> item(@RequestBody GoodsDTO goods, 
     		                      @RequestParam("from") String from){
-    	
+
         String index = q.findOneStrExcuteQuery("select DATABASE_NAME from SWITCH_DATABASE where DATABASE_STATUS = 1");     
         if(index.isEmpty()) {
         	String error = apiResponse.error(dateTime.timestamp(), 400, "Bad Request", "index is empty", "/mobile/history-name");
         	return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
         }else {
-            String serviceValue = serviceMobileApi.listHistory(index,goods.getHistory(),from);              
-            if(error.isServiceError(serviceValue)) {
-            	JSONObject json = new JSONObject(serviceValue);
-            	String error = apiResponse.error(dateTime.timestamp(), 400, "Bad Request", json.getString("error"), "/mobile/history-name");
-            	return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
-            }else {
-            	return ResponseEntity.ok(serviceValue); 
-            }
+           	if(goods.getHistory() != null) {//กรณีมีข้อมูลใน history
+                String serviceValue = serviceMobileApi.listHistory(index,goods.getHistory(),from);              
+                if(error.isServiceError(serviceValue)) {
+                	JSONObject json = new JSONObject(serviceValue);
+                	String error = apiResponse.error(dateTime.timestamp(), 400, "Bad Request", json.getString("error"), "/mobile/history-name");
+                	return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+                }else {
+                	return ResponseEntity.ok(serviceValue); 
+                }
+        	}else { //กรณีไม่มีข้อมูลใน history
+        		String serviceDefaultValue = serviceMobileApi.listItemsDesc(index,from);   
+        		return ResponseEntity.ok(serviceDefaultValue); 
+        	}
+
         }
     }
     // เลือก web name from filter

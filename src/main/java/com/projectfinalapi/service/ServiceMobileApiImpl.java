@@ -51,6 +51,12 @@ public class ServiceMobileApiImpl implements ServiceMobileApi{
 	}
 	
 	@Override
+	public String listItemsDesc(String index, String from) {
+		String elsValue = elasticsearch.getItems(index, from);
+		return getGoods(elsValue);
+	}
+	
+	@Override
 	public String listWebName() {
         String sql = "select WEB_NAME from WEB";
         List<String> listVarchar = new ArrayList<String>();
@@ -134,4 +140,6 @@ public class ServiceMobileApiImpl implements ServiceMobileApi{
 			return json.toString();
 		}		
 	}
+
+
 }

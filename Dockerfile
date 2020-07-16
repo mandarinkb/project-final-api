@@ -2,16 +2,16 @@
 FROM openjdk:8-jdk-alpine
 
 #change timezone
-RUN date
-RUN apk add tzdata
-RUN cp /usr/share/zoneinfo/Asia/Bangkok /etc/localtime
-RUN date
+RUN date && \
+    apk add tzdata && \
+    cp /usr/share/zoneinfo/Asia/Bangkok /etc/localtime && \
+    date
 
 # Set volume point to /tmp
 VOLUME /tmp
 
-# Make port 8080 available to the world outside container
-EXPOSE 8080
+# Make port 8888 available to the world outside container
+EXPOSE 8888
 
 # Set application's JAR file
 ARG JAR_FILE=project-final-api-0.0.1-SNAPSHOT.jar

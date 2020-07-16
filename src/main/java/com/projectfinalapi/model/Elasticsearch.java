@@ -42,6 +42,23 @@ public class Elasticsearch {
         return values.toString();
     }
     
+    // หน้าแรกกรณีไม่มีค่าใน history
+    public String getItems(String index,String from) {
+        String values = null;
+        try {
+        	Unirest.setTimeouts(0, 0);
+        	HttpResponse<String> response = Unirest.post(elasIp+index+"/_search")
+        	  .header("Content-Type", "application/json")
+        	  .body("{\"from\": "+from+",\"size\": "+elaSizeValue+",\"sort\": {\"discount\": \"desc\"},\"query\": {\"match_all\": {}}}")
+        	  .asString();
+
+            values = response.getBody();
+        } catch (UnirestException ex) {
+            Logger.getLogger(Elasticsearch.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return values.toString();
+    }
+    
     //search category
     public String getByCategory(String index, String category,String from) {
         String values = null;
