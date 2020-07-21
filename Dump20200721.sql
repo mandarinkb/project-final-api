@@ -1,5 +1,3 @@
-CREATE DATABASE  IF NOT EXISTS `WEB_SCRAPPING` /*!40100 DEFAULT CHARACTER SET utf8 */;
-USE `WEB_SCRAPPING`;
 -- MySQL dump 10.13  Distrib 5.7.30, for Linux (x86_64)
 --
 -- Host: 127.0.0.1    Database: WEB_SCRAPPING
@@ -31,7 +29,7 @@ CREATE TABLE `SCHEDULE` (
   `METHOD_NAME` varchar(50) DEFAULT NULL,
   `PROJECT_NAME` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`SCHEDULE_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -56,7 +54,7 @@ CREATE TABLE `SWITCH_DATABASE` (
   `DATABASE_NAME` varchar(250) DEFAULT NULL,
   `DATABASE_STATUS` char(1) DEFAULT NULL,
   PRIMARY KEY (`DATABASE_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -82,7 +80,7 @@ CREATE TABLE `USERS` (
   `ROLE` varchar(255) DEFAULT NULL,
   `USERNAME` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`USER_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=40 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -91,7 +89,7 @@ CREATE TABLE `USERS` (
 
 LOCK TABLES `USERS` WRITE;
 /*!40000 ALTER TABLE `USERS` DISABLE KEYS */;
-INSERT INTO `USERS` VALUES (1,'$2a$10$pJ1PL.TW4XCkuD4U5H2QdukPGBRrycwdzyXK.9/hcF1zC2kH5isSK','admin','mandarinkb'),(30,'$2a$10$6FlCzz0mSmX4rWZE.nPhPu42Uj1hyD/4OXLrNNnRLd9wezsKD68nO','admin','demo');
+INSERT INTO `USERS` VALUES (1,'$2a$10$pJ1PL.TW4XCkuD4U5H2QdukPGBRrycwdzyXK.9/hcF1zC2kH5isSK','admin','mandarinkb'),(38,'$2a$10$4ZIYzvxF.n1ACVaDNH7.3eVYg3kDsfHCVLlY6IDyq2uqjdU6KYchC','assistant','demo');
 /*!40000 ALTER TABLE `USERS` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -109,7 +107,7 @@ CREATE TABLE `WEB` (
   `WEB_STATUS` char(1) DEFAULT NULL,
   `ICON_URL` varchar(250) DEFAULT NULL,
   PRIMARY KEY (`Web_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=69 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=74 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -118,7 +116,7 @@ CREATE TABLE `WEB` (
 
 LOCK TABLES `WEB` WRITE;
 /*!40000 ALTER TABLE `WEB` DISABLE KEYS */;
-INSERT INTO `WEB` VALUES (49,'tescolotus','https://shoponline.tescolotus.com/groceries/th-TH/promotions','1','https://www.tescolotus.com/assets/theme2018/tl-theme/img/logo.png'),(66,'lazada','https://www.lazada.co.th/#','0','https://laz-img-cdn.alicdn.com/images/ims-web/TB1KB2laMFY.1VjSZFnXXcFHXXa.png'),(67,'makroclick','https://www.makroclick.com/th','1','https://www.makroclick.com/static/images/logo.png'),(68,'bigc','https://www.bigc.co.th/','1','https://www.bigc.co.th/_nuxt/img/108a02e.png');
+INSERT INTO `WEB` VALUES (49,'tescolotus','https://shoponline.tescolotus.com/groceries/th-TH/promotions','0','https://www.tescolotus.com/assets/theme2018/tl-theme/img/logo.png'),(66,'lazada','https://www.lazada.co.th/#','0','https://laz-img-cdn.alicdn.com/images/ims-web/TB1KB2laMFY.1VjSZFnXXcFHXXa.png'),(67,'makroclick','https://www.makroclick.com/th','1','https://www.makroclick.com/static/images/logo.png'),(68,'bigc','https://www.bigc.co.th/','0','https://www.bigc.co.th/_nuxt/img/108a02e.png');
 /*!40000 ALTER TABLE `WEB` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -131,4 +129,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-06-10 22:31:23
+-- Dump completed on 2020-07-21 16:01:49
