@@ -27,8 +27,8 @@ public class ServiceMobileApiImpl implements ServiceMobileApi{
  
 
 	@Override
-	public String listCategory(String index,String inputCategory,String from) {
-        String elsValue = elasticsearch.getByCategory(index, inputCategory,from);        
+	public String listCategory(String index, String inputCategory, String[] webName ,String from) {
+        String elsValue = elasticsearch.getByCategory(index, inputCategory,webName,from);        
         return getGoods(elsValue);
 	}
 

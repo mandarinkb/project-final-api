@@ -58,7 +58,7 @@ public class Elasticsearch {
         }
         return values.toString();
     }
-    
+    /*
     //search category
     public String getByCategory(String index, String category,String from) {
         String values = null;
@@ -68,6 +68,28 @@ public class Elasticsearch {
         	  .header("Content-Type", "application/json")
         	  .body("{\"from\": "+from+",\"size\": "+elaSizeValue+",\"sort\": {\"discount\": \"desc\"},"
         	  		+ "\"query\": {\"bool\": {\"must\": {\"match\": {\"category\": \""+category+"\"}}}}}")
+        	  .asString();
+            values = response.getBody();
+        } catch (UnirestException ex) {
+            Logger.getLogger(Elasticsearch.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return values.toString();
+    }
+    */
+    // new
+    public String getByCategory(String index, String category, String[] webName,String from) {
+    	String webNameJson = json.webNameJson(webName);
+        String values = null;
+        try {
+        	Unirest.setTimeouts(0, 0);
+        	HttpResponse<String> response = Unirest.post(elasIp+index+"/_search")
+        	  .header("Content-Type", "application/json")
+        	  .body("{\"from\": "+from+",\"size\": "+elaSizeValue+",\"sort\": {\"discount\": \"desc\"},"
+        	  		+ "\"query\": {\"bool\": {\"must\": [\n" + 
+        	  		"{\"match\": {\"category\": \""+category+"\"}},"
+        	  		+ "{\"dis_max\": {\"queries\": [\n" 
+        	  		+ webNameJson +
+        	  		"]}}]}}}")
         	  .asString();
             values = response.getBody();
         } catch (UnirestException ex) {

@@ -122,7 +122,8 @@ public class MobileRestApi {
         	String error = apiResponse.error(dateTime.timestamp(), 400, "Bad Request", "category is empty", "/mobile/category");
         	return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
         }else {
-            String serviceValue = serviceMobileApi.listCategory(index, category ,from);              
+            //String serviceValue = serviceMobileApi.listCategory(index, category ,from);  
+        	String serviceValue = serviceMobileApi.listCategory(index, goods.getCategory() , goods.getWebName() ,from); 
             if(error.isServiceError(serviceValue)) {
             	JSONObject json = new JSONObject(serviceValue);
             	String error = apiResponse.error(dateTime.timestamp(), 400, "Bad Request", json.getString("error"), "/mobile/category");
