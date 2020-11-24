@@ -109,14 +109,14 @@ public class RestApiController {
 
   @GetMapping(path = {"/users"}, headers = "Accept=application/json;charset=UTF-8")
   public ResponseEntity<?> readUsers() {
-	  log.createLog(dateTime.datetime() , dateTime.timestamp(), jwt.usernameFromToken, "read", "read users");  // เก็บ log
+	  //log.createLog(dateTime.datetime() , dateTime.timestamp(), jwt.usernameFromToken, "read", "read users");  // เก็บ log
 	  return ResponseEntity.ok(serviceWebScrappongControl.findUsers());
   }
   
   // get for role user
   @GetMapping(path = {"/user/{id}"}, headers = "Accept=application/json;charset=UTF-8")
   public ResponseEntity<?> readUserId(@PathVariable("id") int id) {
-	  log.createLog(dateTime.datetime() ,dateTime.timestamp(), jwt.usernameFromToken, "read", "read from id (for role user)");  // เก็บ log
+	  //log.createLog(dateTime.datetime() ,dateTime.timestamp(), jwt.usernameFromToken, "read", "read from id (for role user)");  // เก็บ log
 	  return ResponseEntity.ok(serviceWebScrappongControl.findUserId(id));
   } 
   
@@ -130,7 +130,7 @@ public class RestApiController {
 	      log.createLog(dateTime.datetime() ,dateTime.timestamp(), jwt.usernameFromToken, "error", "Not found users");  // เก็บ log
           return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
 	  }else {
-		  log.createLog(dateTime.datetime() ,dateTime.timestamp(), jwt.usernameFromToken, "read", "read from id (for role admin)");  // เก็บ log
+		  //log.createLog(dateTime.datetime() ,dateTime.timestamp(), jwt.usernameFromToken, "read", "read from id (for role admin)");  // เก็บ log
 		  return ResponseEntity.ok(serviceValue);
 	  }
   }   
@@ -156,13 +156,13 @@ public class RestApiController {
   
   @GetMapping(path = {"/web"}, headers = "Accept=application/json;charset=UTF-8")
   public ResponseEntity<?> findWeb() {
-	  log.createLog(dateTime.datetime() ,dateTime.timestamp(), jwt.usernameFromToken, "read", "read web");  // เก็บ log
+	  //log.createLog(dateTime.datetime() ,dateTime.timestamp(), jwt.usernameFromToken, "read", "read web");  // เก็บ log
       return ResponseEntity.ok(serviceWebScrappongControl.findWeb());
   }
   
   @GetMapping(path = {"/web/{id}"}, headers = "Accept=application/json;charset=UTF-8")
   public ResponseEntity<?> findWebId(@PathVariable("id") int id) {
-	  log.createLog(dateTime.datetime() ,dateTime.timestamp(), jwt.usernameFromToken, "read", "read web from id");  // เก็บ log
+	  //log.createLog(dateTime.datetime() ,dateTime.timestamp(), jwt.usernameFromToken, "read", "read web from id");  // เก็บ log
 	  return ResponseEntity.ok(serviceWebScrappongControl.findWebById(id));
   }
   
@@ -193,13 +193,13 @@ public class RestApiController {
   
   @GetMapping(path = {"/schedule"}, headers = "Accept=application/json;charset=UTF-8")
   public ResponseEntity<?>  readSchedule() {
-	  log.createLog(dateTime.datetime() ,dateTime.timestamp(), jwt.usernameFromToken, "read", "read schedule");  // เก็บ log
+	  //log.createLog(dateTime.datetime() ,dateTime.timestamp(), jwt.usernameFromToken, "read", "read schedule");  // เก็บ log
       return ResponseEntity.ok(serviceWebScrappongControl.findSchedule());
   }
 
   @GetMapping(path = {"/schedule/{id}"}, headers = "Accept=application/json;charset=UTF-8")
   public ResponseEntity<?>  readScheduleId(@PathVariable("id") int id) {
-	  log.createLog(dateTime.datetime() ,dateTime.timestamp(), jwt.usernameFromToken, "read", "read schedule from id");  // เก็บ log
+	  //log.createLog(dateTime.datetime() ,dateTime.timestamp(), jwt.usernameFromToken, "read", "read schedule from id");  // เก็บ log
 	  return ResponseEntity.ok(serviceWebScrappongControl.findScheduleById(id));
   }
 
@@ -224,13 +224,13 @@ public class RestApiController {
   
   @GetMapping(path = {"/switch-database"}, headers = "Accept=application/json;charset=UTF-8")
   public ResponseEntity<?>  readSwitchDatabase() {
-	  log.createLog(dateTime.datetime() ,dateTime.timestamp(), jwt.usernameFromToken, "read", "read switch-database");  // เก็บ log
+	  //log.createLog(dateTime.datetime() ,dateTime.timestamp(), jwt.usernameFromToken, "read", "read switch-database");  // เก็บ log
       return ResponseEntity.ok(serviceWebScrappongControl.findSwitchDatabase());
   }
 
   @GetMapping(path = {"/switch-database/{id}"}, headers = "Accept=application/json;charset=UTF-8")
   public ResponseEntity<?>  readSwitchDatabaseId(@PathVariable("id") int id) {
-	  log.createLog(dateTime.datetime() ,dateTime.timestamp(), jwt.usernameFromToken, "read", "read switch-database from id");  // เก็บ log
+	  //log.createLog(dateTime.datetime() ,dateTime.timestamp(), jwt.usernameFromToken, "read", "read switch-database from id");  // เก็บ log
 	  return ResponseEntity.ok(serviceWebScrappongControl.findSwitchDatabaseleById(id));
   }
 

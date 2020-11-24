@@ -49,7 +49,7 @@ public class MobileRestApi {
     		                       @RequestParam("from") String from){
     	// fix bug เก็บ log เฉพาะเรียกครั้งแรก กรณีใช้ infinite-scroll
     	if(from.equals("0")) {
-    		log.createLog(dateTime.datetime() ,dateTime.timestamp(), "user", "search", "search "+goods.getName());  // เก็บ log
+    		log.createLog(dateTime.datetime() ,dateTime.timestamp(), goods.getUserId(), "search", goods.getName());  // เก็บ log
     	}
     	
     	String index = q.findOneStrExcuteQuery("select DATABASE_NAME from SWITCH_DATABASE where DATABASE_STATUS = 1");  
@@ -79,7 +79,7 @@ public class MobileRestApi {
     		                             @RequestParam("from") String from){
     	// fix bug เก็บ log เฉพาะเรียกครั้งแรก กรณีใช้ infinite-scroll
     	if(from.equals("0")) {
-    		log.createLog(dateTime.datetime() ,dateTime.timestamp(), "user", "filter search", "filter search "+goods.getName());  // เก็บ log
+    		log.createLog(dateTime.datetime() ,dateTime.timestamp(), goods.getUserId(), "filter search", goods.getName());  // เก็บ log
     	}
     	
     	String index = q.findOneStrExcuteQuery("select DATABASE_NAME from SWITCH_DATABASE where DATABASE_STATUS = 1");  
@@ -109,7 +109,7 @@ public class MobileRestApi {
     		                          @RequestParam("from") String from){
     	// fix bug เก็บ log เฉพาะเรียกครั้งแรก กรณีใช้ infinite-scroll
     	if(from.equals("0")) {
-    		log.createLog(dateTime.datetime() ,dateTime.timestamp(), "user", "category", "select category "+goods.getCategory());  // เก็บ log
+    		log.createLog(dateTime.datetime() ,dateTime.timestamp(), goods.getUserId(), "category", goods.getCategory());  // เก็บ log
     	}
     	
     	String index = q.findOneStrExcuteQuery("select DATABASE_NAME from SWITCH_DATABASE where DATABASE_STATUS = 1");  
