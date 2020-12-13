@@ -58,7 +58,7 @@ public class ServiceMobileApiImpl implements ServiceMobileApi{
 	
 	@Override
 	public String listWebName() {
-        String sql = "select WEB_NAME from WEB";
+        String sql = "select WEB_NAME from WEB where WEB_STATUS = '1'";
         List<String> listVarchar = new ArrayList<String>();
         List<String> listChar = new ArrayList<String>();
         List<String> listInt = new ArrayList<String>();
