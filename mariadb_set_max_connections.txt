@@ -1,0 +1,5 @@
+#เช็ค
+SELECT @@max_connections;
+
+#เซ็ตค่า max 100000
+set global max_connections = 100000;
