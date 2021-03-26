@@ -123,7 +123,7 @@ public class Elasticsearch {
     	String regxNameJson = json.regxName(name);
         String values = null;
         String priceFilter = "";
-        if(min.equals(max)) { // กรณี มากกว่าที่กำหนด
+        if(min =="10001" && max == "10001") { // กรณี มากกว่าที่กำหนด
         	priceFilter = "{\"price\": {\"gte\": "+max+"}";
         }else {
         	priceFilter = "{\"price\": {\"gte\": "+min+",\"lte\": "+max+"}";
